@@ -1,0 +1,26 @@
+{
+  "name": "ndo.so",
+  "description": "Personal New-Tab Page",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Nico Domino <yo@ndo.dev>",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "packageManager": "pnpm@7.3.0",
+  "dependencies": {
+    "cmdk": "^0.1.19",
+    "next": "12.2.5",
+    "next-auth": "^4.10.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-use": "^17.4.0"
+  },
+  "devDependencies": {
+    "eslint": "8.22.0",
+    "eslint-config-next": "12.2.5"
+  }
+}
