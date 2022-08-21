@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier": "pnpm dlx prettier --write src/**/*.{js,jsx}"
+    "prettier": "prettier --write src/**/*.{js,jsx}"
   },
   "packageManager": "pnpm@7.3.0",
   "dependencies": {
