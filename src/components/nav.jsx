@@ -1,4 +1,3 @@
-import LoginIcon from '@/icons/login'
 import { Avatar, Tooltip } from '@nextui-org/react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 
