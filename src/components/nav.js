@@ -1,22 +1,32 @@
-import * as Avatar from '@radix-ui/react-avatar'
-import * as Tooltip from '@radix-ui/react-tooltip'
 import LoginIcon from '@/icons/login'
+import { Avatar, Tooltip } from '@nextui-org/react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 export default function Nav() {
-  return (
-    <nav className="flex h-full w-96 flex-col-reverse">
-      <button className="">
-        <Tooltip.Root>
-          <Tooltip.Trigger>
-            <LoginIcon />
-          </Tooltip.Trigger>
+  const { data: session } = useSession()
+  const isSignedIn = session?.user
 
-          <Tooltip.Content side="top">
-            Login
-            <Tooltip.Arrow />
-          </Tooltip.Content>
-        </Tooltip.Root>
-      </button>
+  return (
+    <nav className="flex h-full w-20 flex-col-reverse bg-zinc-800/20 p-4">
+      <Tooltip
+        content={isSignedIn ? 'Sign Out' : 'Sign In'}
+        rounded
+        hideArrow
+        shadow
+        placement="right"
+        color="invert"
+      >
+        <Avatar
+          squared
+          zoomed
+          size="lg"
+          bordered
+          color="gradient"
+          className="hover:cursor-pointer"
+          src={session?.user.image ?? '/favicon.png'}
+          onClick={isSignedIn ? signOut : signIn}
+        />
+      </Tooltip>
     </nav>
   )
 }
