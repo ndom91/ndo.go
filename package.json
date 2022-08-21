@@ -12,6 +12,8 @@
   },
   "packageManager": "pnpm@7.3.0",
   "dependencies": {
+    "@radix-ui/react-avatar": "^1.0.0",
+    "@radix-ui/react-tooltip": "^1.0.0",
     "cmdk": "^0.1.19",
     "next": "12.2.5",
     "next-auth": "^4.10.3",
