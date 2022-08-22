@@ -5,7 +5,7 @@
       "@/components/*": ["./src/components/*"],
       "@/pages/*": ["./src/pages/*"],
       "@/lib/*": ["./src/lib/*"],
-      "@/icons/*": ["./src/components/icons/*"]
+      "@/icons": ["./src/components/icons/index.js"]
     }
   }
 }

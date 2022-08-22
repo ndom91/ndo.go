@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import Tag from './tag'
+import { Loading } from '@nextui-org/react'
 import { timeAgo } from '../lib/helpers.js'
+import Tag from './tag'
 
 /**
  * Algolia HN API: https://hn.algolia.com/api
@@ -49,7 +50,7 @@ export default function HackerNews() {
     <section>
       <h1>HackerNews</h1>
       <ul>
-        {posts.length > 0 &&
+        {posts.length > 0 ? (
           posts.map((post) => (
             <li key={post.objectID}>
               <a
@@ -72,7 +73,10 @@ export default function HackerNews() {
                 </div>
               </a>
             </li>
-          ))}
+          ))
+        ) : (
+          <Loading color="secondary" />
+        )}
       </ul>
     </section>
   )
