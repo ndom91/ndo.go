@@ -1,46 +1,105 @@
-import { Avatar, Dropdown } from '@nextui-org/react'
+import { Avatar, Navbar, Dropdown, Button, Link, Text } from '@nextui-org/react'
 import { useSession, signIn, signOut } from 'next-auth/react'
-import { Login, Logout } from '@/icons'
 
 export default function Nav() {
   const { data: session } = useSession()
-  const isSignedIn = session?.user
 
   const dropdownAction = (key) => {
-    if (key === 'logout') {
-      isSignedIn ? signOut() : signIn()
+    switch (key) {
+      case 'logout':
+        signOut()
+        break
+      case 'login':
+        signIn()
+        break
+      default:
+        console.log('Dropdown onClick', key)
     }
   }
 
   return (
-    <nav className="flex h-full w-20 flex-col-reverse bg-zinc-800/20 p-4">
-      <Dropdown>
-        <Dropdown.Trigger>
-          <Avatar
-            squared
-            zoomed
-            size="lg"
-            bordered
-            color="gradient"
-            className="hover:cursor-pointer"
-            src={session?.user.image ?? '/favicon.png'}
-          />
-        </Dropdown.Trigger>
-        <Dropdown.Menu
-          aria-label="User Actions"
-          onAction={(key) => dropdownAction(key)}
-        >
-          <Dropdown.Item key="settings" icon={<Login />}>
-            Settings
-          </Dropdown.Item>
-          <Dropdown.Item
-            key="logout"
-            icon={isSignedIn ? <Logout /> : <Login />}
+    <Navbar
+      isBordered={true}
+      disableShadow
+      maxWidth="fluid"
+      variant={'floating'}
+      className="bg-none"
+    >
+      <Navbar.Brand>
+        <Avatar
+          squared
+          zoomed
+          size="lg"
+          bordered
+          color="gradient"
+          src="/favicon.png"
+          alt="ndo logo"
+          width="32"
+          height="32"
+        />
+      </Navbar.Brand>
+      <Navbar.Content
+        css={{
+          '@xs': {
+            w: '12%',
+            jc: 'flex-end',
+          },
+        }}
+      >
+        <Dropdown placement="bottom-right">
+          <Navbar.Item>
+            <Dropdown.Trigger>
+              <Avatar
+                bordered
+                as="button"
+                color="secondary"
+                size="md"
+                src={session?.user.image ?? '/favicon.png'}
+              />
+            </Dropdown.Trigger>
+          </Navbar.Item>
+          <Dropdown.Menu
+            aria-label="User menu actions"
+            color="secondary"
+            disabledKeys={['profile']}
+            onAction={(key) => dropdownAction(key)}
           >
-            {isSignedIn ? 'Sign Out' : 'Sign In'}
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </nav>
+            <Dropdown.Item key="profile" css={{ height: '$18' }}>
+              <Text color="inherit" css={{ d: 'flex' }}>
+                Signed in as
+              </Text>
+              <Text b color="inherit" css={{ d: 'flex' }}>
+                {session?.user.name}
+              </Text>
+            </Dropdown.Item>
+            <Dropdown.Item key="settings" withDivider textValue="My Settings">
+              My Settings
+            </Dropdown.Item>
+            <Dropdown.Item key="system" textValue="System">
+              System
+            </Dropdown.Item>
+            {session?.user ? (
+              <Dropdown.Item
+                key="logout"
+                withDivider
+                color="error"
+                textValue="Logout"
+              >
+                Log Out
+              </Dropdown.Item>
+            ) : (
+              <Dropdown.Item
+                key="login"
+                withDivider
+                color="secondary"
+                textValue="Login"
+              >
+                Login
+              </Dropdown.Item>
+            )}
+          </Dropdown.Menu>
+        </Dropdown>
+      </Navbar.Content>
+    </Navbar>
   )
 }
