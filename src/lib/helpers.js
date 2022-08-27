@@ -74,3 +74,9 @@ export function timeAgo(dateParam) {
 
   return getFormattedDate(date) // 10. January 2017. at 10:20
 }
+
+export function decodeHtml(str) {
+  var txt = document.createElement('textarea')
+  txt.innerHTML = str
+  return txt.value
+}

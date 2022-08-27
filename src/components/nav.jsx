@@ -19,8 +19,7 @@ export default function Nav() {
 
   return (
     <Navbar
-      isBordered={true}
-      disableShadow
+      isBordered={false}
       maxWidth="fluid"
       variant={'floating'}
       className="bg-none"
@@ -28,10 +27,7 @@ export default function Nav() {
       <Navbar.Brand>
         <Avatar
           squared
-          zoomed
           size="lg"
-          bordered
-          color="gradient"
           src="/favicon.png"
           alt="ndo logo"
           width="32"
@@ -51,9 +47,11 @@ export default function Nav() {
             <Dropdown.Trigger>
               <Avatar
                 bordered
+                size="lg"
+                squared
+                zoomed
                 as="button"
-                color="secondary"
-                size="md"
+                color="gradient"
                 src={session?.user.image ?? '/favicon.png'}
               />
             </Dropdown.Trigger>

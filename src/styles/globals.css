@@ -6,23 +6,24 @@
 ::-webkit-scrollbar {
   width: 8px;
   height: 10px;
+  transition: all 250ms ease-in-out;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
   border-radius: 100vh;
   background: transparent;
+  transition: all 250ms ease-in-out;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  @apply bg-blue-100;
+  @apply bg-blue-50;
   border-radius: 100vh;
   transition: all 250ms ease-in-out;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #3c3b3b4b;
-  cursor: pointer;
+  @apply cursor-pointer bg-blue-200;
 }
