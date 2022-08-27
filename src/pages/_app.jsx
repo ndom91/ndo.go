@@ -1,6 +1,7 @@
 import { SessionProvider } from 'next-auth/react'
 import { NextUIProvider } from '@nextui-org/react'
 import '../styles/globals.css'
+import '../components/CommandMenu.css'
 
 export default function App({
   Component,

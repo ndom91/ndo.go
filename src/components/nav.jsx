@@ -1,4 +1,4 @@
-import { Avatar, Navbar, Dropdown, Button, Link, Text } from '@nextui-org/react'
+import { Avatar, Navbar, Dropdown, Text } from '@nextui-org/react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 
 export default function Nav() {
@@ -10,7 +10,7 @@ export default function Nav() {
         signOut()
         break
       case 'login':
-        signIn()
+        signIn('github')
         break
       default:
         console.log('Dropdown onClick', key)
