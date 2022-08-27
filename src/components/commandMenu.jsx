@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Popover } from '@nextui-org/react'
 import { Command } from 'cmdk'
 import { Logo, FigmaIcon, SlackIcon, YouTubeIcon } from './commandIcons'
@@ -8,23 +8,10 @@ export default function CommandMenu({ close }) {
   const inputRef = useRef(null)
   const [activeApps, setActiveApps] = useState([])
   const [search, setSearch] = useState('')
+  const [pages, setPages] = useState([])
+  const page = pages[pages.length - 1]
 
   const listRef = useRef(null)
-
-  useEffect(() => {
-    function listener(e) {
-      e.preventDefault()
-      if (e.key === 'p' && (e.metaKey || e.ctrlKey)) {
-        console.log('KEY EVENT: ctrl+p')
-      }
-    }
-
-    document.addEventListener('keydown', listener)
-
-    return () => {
-      document.removeEventListener('keydown', listener)
-    }
-  }, [])
 
   useEffect(() => {
     const fetchApps = async () => {
@@ -50,7 +37,18 @@ export default function CommandMenu({ close }) {
 
   return (
     <div className="dark raycast">
-      <Command value={value} onValueChange={(v) => setValue(v)}>
+      <Command
+        value={value}
+        onValueChange={(v) => setValue(v)}
+        onKeyDown={(e) => {
+          // Escape goes to previous page
+          // Backspace goes to previous page when search is empty
+          if (e.key === 'Escape' || (e.key === 'Backspace' && !search)) {
+            e.preventDefault()
+            setPages((pages) => pages.slice(0, -1))
+          }
+        }}
+      >
         <div cmdk-raycast-top-shine="" />
         <Command.Input
           ref={inputRef}
@@ -62,67 +60,130 @@ export default function CommandMenu({ close }) {
         <hr cmdk-raycast-loader="" />
         <Command.List ref={listRef}>
           <Command.Empty>No results found.</Command.Empty>
-          <Command.Group heading="Suggestions">
-            {activeApps.length > 0 &&
-              activeApps.map((app) => (
-                <Item
-                  key={app.name}
-                  value={app.name}
-                  url={app.url}
-                  categoryIcon={<ChecklyIcon />}
-                  close={close}
+          {!page && (
+            <>
+              <Command.Group heading="Suggestions">
+                {activeApps.length > 0 &&
+                  activeApps.map((app) => (
+                    <Item
+                      key={app.name}
+                      value={app.name}
+                      url={app.url}
+                      categoryIcon={<ChecklyIcon />}
+                      close={close}
+                    >
+                      <Logo>
+                        <img
+                          src={`/icons/${app.img}`}
+                          alt={`${app.name} Logo`}
+                          height={24}
+                          width={24}
+                        />
+                      </Logo>
+                      <div className="flex w-full items-center justify-between gap-4 overflow-hidden truncate">
+                        <span>{app.name}</span>
+                        <span className="overflow-hidden truncate whitespace-nowrap text-xs text-white opacity-30">
+                          {app.url.replace('https://', '')}
+                        </span>
+                      </div>
+                    </Item>
+                  ))}
+                <Item value="Figma" url="https://figma.com" close={close}>
+                  <Logo>
+                    <FigmaIcon />
+                  </Logo>
+                  Figma
+                </Item>
+                <Item value="YouTube" url="https://youtube.com" close={close}>
+                  <Logo>
+                    <YouTubeIcon />
+                  </Logo>
+                  YouTube
+                </Item>
+              </Command.Group>
+              <Command.Group heading="Commands">
+                <Command.Item
+                  onSelect={() => {
+                    setSearch('')
+                    setPages([...pages, 'pull-request'])
+                  }}
                 >
                   <Logo>
                     <img
-                      src={`/icons/${app.img}`}
-                      alt={`${app.name} Logo`}
-                      height={24}
-                      width={24}
+                      height="20"
+                      width="20"
+                      src="/icons/github.svg"
+                      alt="Github Logo"
                     />
                   </Logo>
-                  <div className="flex w-full items-center justify-between gap-4 overflow-hidden truncate">
-                    <span>{app.name}</span>
-                    <span className="overflow-hidden truncate whitespace-nowrap text-xs text-white opacity-30">
-                      {app.url.replace('https://', '')}
-                    </span>
-                  </div>
-                </Item>
-              ))}
-            <Item value="Figma" url="https://figma.com" close={close}>
-              <Logo>
-                <FigmaIcon />
-              </Logo>
-              Figma
-            </Item>
-            <Item value="Slack" url="" close={close}>
-              <Logo>
-                <SlackIcon />
-              </Logo>
-              Slack
-            </Item>
-            <Item value="YouTube" url="" close={close}>
-              <Logo>
-                <YouTubeIcon />
-              </Logo>
-              YouTube
-            </Item>
-          </Command.Group>
-          <Command.Group heading="Commands">
-            <Item isCommand value="Clipboard History" url="">
-              <Logo>
-                <ClipboardIcon />
-              </Logo>
-              Clipboard History
-            </Item>
-            <Item isCommand value="Import Extension" url="">
-              <HammerIcon />
-              Import Extension
-            </Item>
-            <Item isCommand value="Manage Extensions" url="">
-              <HammerIcon />
-              Manage Extensions
-            </Item>
-          </Command.Group>
+                  Create new PR
+                  <span cmdk-raycast-meta="" className="flex">
+                    <ChevronRight />
+                  </span>
+                </Command.Item>
+                <Command.Item
+                  onSelect={() => {
+                    window.open('https://app.shortcut.com/checkly/stories/new')
+                  }}
+                >
+                  <Logo>
+                    <img
+                      height="20"
+                      width="20"
+                      src="/icons/shortcut.svg"
+                      alt="Github Logo"
+                    />
+                  </Logo>
+                  Create new story
+                  <span cmdk-raycast-meta="" className="flex">
+                    Command
+                  </span>
+                </Command.Item>
+              </Command.Group>
+            </>
+          )}
+
+          {(page === 'pull-request' || search) && (
+            <Command.Group heading="New Pull Request">
+              <Command.Item
+                value="checkly/checkly-webapp"
+                onSelect={() =>
+                  window.open(
+                    'https://github.com/checkly/checkly-webapp/compare'
+                  )
+                }
+              >
+                <pre>checkly/checkly-webapp</pre>
+              </Command.Item>
+              <Command.Item
+                value="checkly/checkly-backend"
+                onSelect={() =>
+                  window.open(
+                    'https://github.com/checkly/checkly-backend/compare'
+                  )
+                }
+              >
+                <pre>checkly/checkly-backend</pre>
+              </Command.Item>
+              <Command.Item
+                value="checkly/checkly-lambda-runners"
+                onSelect={() =>
+                  window.open(
+                    'https://github.com/checkly/checkly-lambda-runners/compare'
+                  )
+                }
+              >
+                <pre>checkly/checkly-lamdba-runners</pre>
+              </Command.Item>
+            </Command.Group>
+          )}
+
+          {page === 'teams' && (
+            <>
+              <Command.Item>Team 1</Command.Item>
+              <Command.Item>Team 2</Command.Item>
+            </>
+          )}
         </Command.List>
 
         <div cmdk-raycast-footer="" className="flex justify-between">
@@ -160,13 +221,15 @@ function Item({
   return (
     <Command.Item value={value} onSelect={() => handleSelect(url, value)}>
       {children}
-      <span cmdk-raycast-meta="">{isCommand ? 'Command' : categoryIcon}</span>
+      <span cmdk-raycast-meta="">
+        {isCommand ? 'Command' : categoryIcon ? categoryIcon : 'Link'}
+      </span>
     </Command.Item>
   )
 }
 
 function SubCommand({ inputRef, listRef, selectedValue }) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     function listener(e) {
@@ -203,9 +266,11 @@ function SubCommand({ inputRef, listRef, selectedValue }) {
         onClick={() => setOpen(true)}
         aria-expanded={open}
       >
-        Actions
-        <kbd>⌘</kbd>
-        <kbd>K</kbd>
+        <div className="flex justify-end">
+          Actions
+          <kbd>⌘</kbd>
+          <kbd>K</kbd>
+        </div>
       </Popover.Trigger>
       <Popover.Content
         side="top"
@@ -378,6 +443,25 @@ function HammerIcon() {
         />
       </svg>
     </div>
+  )
+}
+
+function ChevronRight() {
+  return (
+    <svg
+      className="h-6 w-6"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9 5l7 7-7 7"
+      />
+    </svg>
   )
 }
 
