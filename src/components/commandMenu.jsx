@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { Popover } from '@nextui-org/react'
 import { Command } from 'cmdk'
-import { Logo, FigmaIcon, SlackIcon, YouTubeIcon } from './commandIcons'
+import { Logo, FigmaIcon, YouTubeIcon } from './commandIcons'
 
 export default function CommandMenu({ close }) {
   const [value, setValue] = useState('linear')
