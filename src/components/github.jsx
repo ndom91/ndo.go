@@ -63,8 +63,8 @@ export default function Github() {
   }
 
   useEffect(() => {
-    fetchNotifications()
-  }, [])
+    session?.user && fetchNotifications()
+  }, [session?.user])
 
   return (
     <Card
@@ -87,7 +87,7 @@ export default function Github() {
       </Card.Header>
       <Card.Body className="m-0 px-1 py-0">
         <ul>
-          {notifications?.length > 0 ? (
+          {notifications?.length > 0 && session?.user ? (
             notifications.map((notification) => (
               <li key={notification.id} className="m-0 p-0">
                 <a
@@ -123,6 +123,12 @@ export default function Github() {
                 </a>
               </li>
             ))
+          ) : !session?.user ? (
+            <div className="flex w-full justify-center">
+              <span className="text-lg font-extralight">
+                Please Login to continue
+              </span>
+            </div>
           ) : (
             <div className="my-4 flex w-full justify-center">
               <Badge variant="points" />
