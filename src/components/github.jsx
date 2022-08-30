@@ -1,24 +1,31 @@
 import { useEffect, useState } from 'react'
 import { Badge, Button, Row, Card, Grid, Text, Modal } from '@nextui-org/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
+import { useSession } from 'next-auth/react'
 
-/**
- * Algolia HN API: https://hn.algolia.com/api
- */
-export default function HackerNews() {
-  const [posts, setPosts] = useState([])
+export default function Github() {
+  const { data: session } = useSession()
+  const [notifications, setNotifications] = useState([])
   const [comment, setComment] = useState([])
   const [openModal, setOpenModal] = useState(false)
 
-  const fetchFrontPage = async () => {
+  const fetchNotifications = async () => {
     try {
       const res = await fetch(
-        'https://hn.algolia.com/api/v1/search?tags=front_page'
+        `https://api.github.com/notifications?${new URLSearchParams({
+          participating: true,
+        })}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+            Accept: 'application/vnd.github+json',
+          },
+        }
       )
       if (res.status === 200) {
         const data = await res.json()
-        console.log('HN Data', data.hits)
-        setPosts(data.hits)
+        console.log('Github Data', data)
+        setNotifications(data)
       } else {
         throw new Error('Failed to fetch')
       }
@@ -56,42 +63,42 @@ export default function HackerNews() {
   }
 
   useEffect(() => {
-    fetchFrontPage()
+    fetchNotifications()
   }, [])
 
   return (
     <Card
       css={{ p: '$6' }}
-      className="max-h-full w-full max-w-xl flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
+      className="max-h-full max-w-xl flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
       variant="shadow"
     >
       <Card.Header>
         <img
-          alt="HackerNews logo"
-          src="https://news.ycombinator.com/y18.gif"
+          alt="GitHub Logo"
+          src="/icons/github.svg"
           width="34px"
           height="34px"
         />
         <Grid.Container css={{ pl: '$6' }}>
           <Grid xs={12}>
-            <Text className="text-xl font-thin">HackerNews</Text>
+            <Text className="text-xl font-thin">Github</Text>
           </Grid>
         </Grid.Container>
       </Card.Header>
       <Card.Body className="m-0 px-1 py-0">
         <ul>
-          {posts?.length > 0 ? (
-            posts.map((post) => (
-              <li key={post.objectID} className="m-0 p-0">
+          {notifications?.length > 0 ? (
+            notifications.map((notification) => (
+              <li key={notification.id} className="m-0 p-0">
                 <a
-                  href={post.url}
+                  href={notification.url}
                   target="_blank"
                   rel="noopener noreferer noreferrer"
                   className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-800"
                 >
                   <div className="flex justify-start">
                     <span className="text-lg font-extralight">
-                      {post.title}
+                      {notification.subject.title}
                     </span>
                   </div>
                   <div className="flex items-center justify-start space-x-2">
@@ -101,16 +108,16 @@ export default function HackerNews() {
                       className=""
                       disableOutline
                     >
-                      {post.points}
+                      {notification.reason}
                     </Badge>
-                    <span
-                      className="text-sm"
-                      onClick={(e) => openCommentModal(e, post)}
-                    >
-                      {post.num_comments ?? 0} Comments
-                    </span>
+                    {/* <span */}
+                    {/*   className="text-sm" */}
+                    {/*   onClick={(e) => openCommentModal(e, post)} */}
+                    {/* > */}
+                    {/*   {post.num_comments ?? 0} Comments */}
+                    {/* </span> */}
                     <span className="text-sm font-extralight text-slate-400">
-                      {timeAgo(post.created_at_i * 1000)}
+                      {timeAgo(notification.updated_at * 1000)}
                     </span>
                   </div>
                 </a>
@@ -175,17 +182,6 @@ export default function HackerNews() {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      {/* <Card.Footer> */}
-      {/*   <Link */}
-      {/*     icon */}
-      {/*     color="primary" */}
-      {/*     target="_blank" */}
-      {/*     href="https://github.com/nextui-org/nextui" */}
-      {/*   > */}
-      {/*     Visit source code on GitHub. */}
-      {/*   </Link> */}
-      {/* </Card.Footer> */}
     </Card>
   )
 }

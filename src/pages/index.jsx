@@ -8,6 +8,7 @@ import Layout from '@/components/layout'
 import CommandMenu from '@/components/commandMenu'
 import CommandWrapper from '@/components/commandWrapper'
 import HackerNews from '@/components/hackernews'
+import Github from '@/components/github'
 
 export default function Home({ nextauth }) {
   const [open, setOpen] = useState(false)
@@ -59,9 +60,30 @@ export default function Home({ nextauth }) {
           </>
         )}
       </AnimatePresence>
-      <Grid.Container className="h-full p-6">
-        <Grid justify="flex-start" alignItems="stretch" className="h-full">
+      <Grid.Container className="h-full p-6" gap={2}>
+        <Grid
+          justify="flex-start"
+          alignItems="stretch"
+          className="h-full"
+          xs={4}
+        >
           <HackerNews className="h-full" />
+        </Grid>
+        <Grid
+          justify="flex-start"
+          alignItems="stretch"
+          className="h-full"
+          xs={4}
+        >
+          <Github />
+        </Grid>
+        <Grid
+          justify="flex-start"
+          alignItems="stretch"
+          className="h-full"
+          xs={4}
+        >
+          <div className="max-h-full w-full max-w-xl flex-shrink-0 rounded-xl border-0 bg-gray-900/95 shadow-2xl" />
         </Grid>
       </Grid.Container>
     </Layout>

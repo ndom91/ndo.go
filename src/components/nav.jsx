@@ -1,11 +1,28 @@
-import { Avatar, Navbar, Dropdown, Text } from '@nextui-org/react'
+import {
+  Avatar,
+  Navbar,
+  Dropdown,
+  Text,
+  Switch,
+  useTheme,
+} from '@nextui-org/react'
+import { useTheme as useNextTheme } from 'next-themes'
 import { useSession, signIn, signOut } from 'next-auth/react'
 
 export default function Nav() {
   const { data: session } = useSession()
+  const { setTheme } = useNextTheme()
+  const { isDark, type } = useTheme()
+
+  console.log('isDark', isDark)
+  console.log('theme.type', type)
 
   const dropdownAction = (key) => {
     switch (key) {
+      case 'theme':
+        console.log('theme', type)
+        setTheme(isDark ? 'light' : 'dark')
+        break
       case 'logout':
         signOut()
         break
@@ -13,7 +30,7 @@ export default function Nav() {
         signIn('github')
         break
       default:
-        console.log('Dropdown onClick', key)
+        console.log('Dropdown.default.onClick', key)
     }
   }
 
@@ -72,6 +89,19 @@ export default function Nav() {
             </Dropdown.Item>
             <Dropdown.Item key="settings" withDivider textValue="My Settings">
               My Settings
+            </Dropdown.Item>
+            <Dropdown.Item
+              key="theme"
+              textValue="Theme"
+              onClick={(e) => e.preventDefault()}
+            >
+              <div
+                className="flex items-center justify-between"
+                onClick={(e) => e.preventDefault()}
+              >
+                Theme: {type[0].toUpperCase() + type.slice(1, type.length)}
+                <Switch checked={isDark} color="secondary" size="sm" />
+              </div>
             </Dropdown.Item>
             <Dropdown.Item key="system" textValue="System">
               System
