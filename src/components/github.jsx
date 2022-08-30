@@ -72,18 +72,14 @@ export default function Github() {
       className="max-h-full max-w-xl flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
       variant="shadow"
     >
-      <Card.Header>
+      <Card.Header className="space-x-2">
         <img
           alt="GitHub Logo"
           src="/icons/github.svg"
           width="34px"
           height="34px"
         />
-        <Grid.Container css={{ pl: '$6' }}>
-          <Grid xs={12}>
-            <Text className="text-xl font-thin">Github</Text>
-          </Grid>
-        </Grid.Container>
+        <div className="text-xl font-thin dark:text-white">Github</div>
       </Card.Header>
       <Card.Body className="m-0 px-1 py-0">
         <ul>
