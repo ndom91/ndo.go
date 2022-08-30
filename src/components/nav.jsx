@@ -14,13 +14,9 @@ export default function Nav() {
   const { setTheme } = useNextTheme()
   const { isDark, type } = useTheme()
 
-  console.log('isDark', isDark)
-  console.log('theme.type', type)
-
   const dropdownAction = (key) => {
     switch (key) {
       case 'theme':
-        console.log('theme', type)
         setTheme(isDark ? 'light' : 'dark')
         break
       case 'logout':
@@ -75,11 +71,14 @@ export default function Nav() {
           </Navbar.Item>
           <Dropdown.Menu
             aria-label="User menu actions"
-            color="secondary"
             disabledKeys={['profile']}
             onAction={(key) => dropdownAction(key)}
           >
-            <Dropdown.Item key="profile" css={{ height: '$18' }}>
+            <Dropdown.Item
+              key="profile"
+              css={{ height: '$18' }}
+              textValue="Sign in as"
+            >
               <Text color="inherit" css={{ d: 'flex' }}>
                 Signed in as
               </Text>

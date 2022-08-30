@@ -44,7 +44,8 @@ export default function Home({ nextauth }) {
     <Layout>
       <AnimatePresence
         initial={false}
-        exitBeforeEnter={true}
+        /* exitBeforeEnter={true} */
+        mode="wait"
         onExitComplete={() => null}
       >
         {open && (
