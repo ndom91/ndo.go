@@ -62,7 +62,7 @@ export default function HackerNews() {
   return (
     <Card
       css={{ p: '$6' }}
-      className="max-h-full w-full max-w-xl flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
+      className="max-h-full w-full flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
       variant="shadow"
     >
       <Card.Header className="space-x-2">

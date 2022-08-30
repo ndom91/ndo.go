@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Badge, Button, Row, Card, Grid, Text, Modal } from '@nextui-org/react'
+import { Badge, Button, Row, Card, Text, Modal } from '@nextui-org/react'
+import { signIn } from 'next-auth/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
 import { useSession } from 'next-auth/react'
 
@@ -69,7 +70,7 @@ export default function Github() {
   return (
     <Card
       css={{ p: '$6' }}
-      className="max-h-full max-w-xl flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
+      className="max-h-full flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
       variant="shadow"
     >
       <Card.Header className="space-x-2">
@@ -122,7 +123,14 @@ export default function Github() {
           ) : !session?.user ? (
             <div className="flex w-full justify-center">
               <span className="text-lg font-extralight">
-                Please Login to continue
+                Please{' '}
+                <span
+                  className="underline-offset-[0.5] underline decoration-pink-500/60 decoration-4 hover:cursor-pointer"
+                  onClick={() => signIn('github')}
+                >
+                  Login
+                </span>{' '}
+                to continue
               </span>
             </div>
           ) : (

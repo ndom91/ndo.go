@@ -42,12 +42,7 @@ export default function Home({ nextauth }) {
 
   return (
     <Layout>
-      <AnimatePresence
-        initial={false}
-        /* exitBeforeEnter={true} */
-        mode="wait"
-        onExitComplete={() => null}
-      >
+      <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {open && (
           <>
             <div
@@ -61,7 +56,7 @@ export default function Home({ nextauth }) {
           </>
         )}
       </AnimatePresence>
-      <Grid.Container className="h-full p-6" gap={2}>
+      <Grid.Container className="h-full space-x-8 p-6" wrap="nowrap">
         <Grid
           justify="flex-start"
           alignItems="stretch"
@@ -84,7 +79,7 @@ export default function Home({ nextauth }) {
           className="h-full"
           xs={4}
         >
-          <div className="max-h-full w-full max-w-xl flex-shrink-0 rounded-xl border-0 bg-gray-900/95 shadow-2xl" />
+          <div className="max-h-full w-full flex-shrink-0 rounded-xl border-0 bg-gray-900/95 shadow-2xl" />
         </Grid>
       </Grid.Container>
     </Layout>
