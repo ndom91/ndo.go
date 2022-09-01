@@ -156,16 +156,18 @@ export default function Github() {
           />
           <div className="text-xl font-thin dark:text-white">Github</div>
         </div>
-        <Input
-          bordered
-          color="secondary"
-          style={{ '--nextui--inputTextColor': '#9750dd' }}
-          borderWeight="light"
-          labelPlaceholder="Search"
-          contentClickable
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        />
+        {session?.user ? (
+          <Input
+            bordered
+            color="secondary"
+            style={{ '--nextui--inputTextColor': '#9750dd' }}
+            borderWeight="light"
+            labelPlaceholder="Search"
+            contentClickable
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+        ) : null}
       </Card.Header>
       <Card.Body className="m-0 px-1 py-0">
         <ul className="flex flex-col gap-2">
