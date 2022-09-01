@@ -65,7 +65,7 @@ export default function HackerNews() {
       className="max-h-full w-full flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
       variant="shadow"
     >
-      <Card.Header className="space-x-2">
+      <Card.Header className="space-x-2 py-6">
         <img
           alt="HackerNews logo"
           src="https://news.ycombinator.com/y18.gif"

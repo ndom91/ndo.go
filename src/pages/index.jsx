@@ -9,6 +9,7 @@ import CommandMenu from '@/components/commandMenu'
 import CommandWrapper from '@/components/commandWrapper'
 import HackerNews from '@/components/hackernews'
 import Github from '@/components/github'
+import Shortcut from '@/components/shortcut'
 
 export default function Home({ nextauth }) {
   const [open, setOpen] = useState(false)
@@ -79,7 +80,7 @@ export default function Home({ nextauth }) {
           className="h-full"
           xs={4}
         >
-          <div className="max-h-full w-full flex-shrink-0 rounded-xl border-0 bg-gray-900/95 shadow-2xl" />
+          <Shortcut />
         </Grid>
       </Grid.Container>
     </Layout>

@@ -3,82 +3,68 @@ import { Badge, Button, Row, Card, Text, Modal, Input } from '@nextui-org/react'
 import { signIn } from 'next-auth/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
 import { useSession } from 'next-auth/react'
-/* import { Octokit } from 'octokit' */
 
-const wantedRepoOrgs = ['checkly']
+const SHORCUT_USER_ID = '600168ef-5cec-450b-90ba-4a497a949263'
 
-export default function Github() {
+export default function Shortcut() {
   const { data: session } = useSession()
   const [filter, setFilter] = useState('')
-  const [notifications, setNotifications] = useState([])
-  const [originalNotifications, setOriginalNotifications] = useState([])
+  const [stories, setStories] = useState([])
+  const [epics, setEpics] = useState([])
+  const [originalStories, setOriginalStories] = useState([])
   const [comment, setComment] = useState([])
   const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
-    if (!filter && notifications !== originalNotifications)
-      setNotifications(originalNotifications)
+    if (!filter && stories !== originalStories) setStories(originalStories)
 
-    const filteredNotifications = originalNotifications.filter((notif) => {
-      if (notif.repository.owner.login.includes(filter)) {
-        return notif
-      } else if (notif.subject.title.includes(filter)) {
-        return notif
+    const filteredStories = originalStories.filter((story) => {
+      if (story.name.includes(filter)) {
+        return story
+      } else if (story.id.toString().includes(filter)) {
+        return story
       }
     })
-    setNotifications(filteredNotifications)
+    setStories(filteredStories)
   }, [filter])
 
   const fetchNotifications = async () => {
     try {
+      const epicRes = await fetch('https://api.app.shortcut.com/api/v3/epics', {
+        headers: {
+          'Shortcut-Token': process.env.NEXT_PUBLIC_SHORTCUT_KEY,
+          'Content-Type': 'application/json',
+        },
+      })
+      const epicData = await epicRes.json()
+      const teamEpics = epicData.filter((epic) => {
+        return epic.owner_ids.includes(SHORCUT_USER_ID)
+      })
+      setEpics(teamEpics)
+
       const res = await fetch(
-        `https://api.github.com/notifications?${new URLSearchParams({
-          all: false,
-          participating: true,
-          per_page: 50,
-          /* since: new Date('2022-08-30').toISOString(), */
-        })}`,
+        `https://api.app.shortcut.com/api/v3/search/stories?${new URLSearchParams(
+          {
+            query: 'owner:ndom91 !state:"Complete" !is:archived',
+          }
+        )}`,
         {
           headers: {
-            /* Authorization: `Bearer ${session.accessToken}`, */
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_PAT}`,
-            Accept: 'application/vnd.github+json',
+            'Shortcut-Token': process.env.NEXT_PUBLIC_SHORTCUT_KEY,
+            'Content-Type': 'application/json',
           },
         }
       )
-      /* const octokit = new Octokit({ */
-      /*   auth: session?.accessToken, */
-      /*   auth: process.env.NEXT_PUBLIC_GITHUB_PAT, */
-      /* }) */
-      const resIssues = await fetch(`https://api.github.com/notifications`, {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_PAT}`,
-          Accept: 'application/vnd.github+json',
-        },
-      })
-      const data2 = await resIssues.json()
-      /* console.log('checkly-webapp issues', data2) */
 
       if (res.status === 200) {
         const data = await res.json()
-        /* console.log('Github Data', data) */
-        /* console.table( */
-        /*   data.reduce((acc, val) => { */
-        /*     if (!val) return */
-        /*     if (acc[val?.repository?.owner?.login]) { */
-        /*       acc[val.repository.owner.login]++ */
-        /*     } else { */
-        /*       acc[val.repository.owner.login] = 1 */
-        /*     } */
-        /*     return acc */
-        /*   }, {}) */
-        /* ) */
+        console.log('Shortcut Data', data.data)
         /* const workNotifications = data.filter((not) => { */
         /*   return wantedRepoOrgs.includes(not.repository?.owner?.login) */
         /* }) */
         /* console.log('Github Data', workNotifications) */
-        setNotifications(data)
-        setOriginalNotifications(data)
+        setStories(data.data)
+        setOriginalStories(data.data)
       } else {
         throw new Error('Failed to fetch')
       }
@@ -115,7 +101,7 @@ export default function Github() {
       )
       if (res.status === 200) {
         const data = await res.json()
-        /* console.log('comment data', data) */
+        console.log('comment data', data)
         setComment({ ...comment, title: post.title, items: data.hits })
       } else {
         throw new Error('Failed to fetch')
@@ -150,11 +136,11 @@ export default function Github() {
         <div className="flex items-center justify-start gap-2">
           <img
             alt="GitHub Logo"
-            src="/icons/github.svg"
+            src="/icons/shortcut.svg"
             width="34px"
             height="34px"
           />
-          <div className="text-xl font-thin dark:text-white">Github</div>
+          <div className="text-xl font-thin dark:text-white">Shortcut</div>
         </div>
         <Input
           bordered
@@ -169,13 +155,11 @@ export default function Github() {
       </Card.Header>
       <Card.Body className="m-0 px-1 py-0">
         <ul className="flex flex-col gap-2">
-          {notifications?.length > 0 && session?.user ? (
-            notifications.map((notification) => (
-              <li key={notification.id} className="m-0 p-0">
+          {stories?.length > 0 && session?.user ? (
+            stories.map((story) => (
+              <li key={story.id} className="m-0 p-0">
                 <a
-                  href={notification.subject?.url
-                    ?.replace('api.github.com/repos', 'github.com')
-                    .replace('pulls', 'pull')}
+                  href={story.app_url}
                   target="_blank"
                   rel="noopener noreferer noreferrer"
                   className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-800"
@@ -184,21 +168,27 @@ export default function Github() {
                     <Badge
                       variant="flat"
                       color="secondary"
-                      className=""
+                      size="md"
                       disableOutline
+                      className="w-14"
                     >
-                      {notification.repository.owner.login}
+                      {story.id}
                     </Badge>
-                    <span className="flex-grow">
-                      {notification.subject.title}
-                    </span>
+                    <div className="flex flex-grow flex-col items-start justify-center">
+                      <span className="">{story.name}</span>
+                      {story.epic_id ? (
+                        <span className="text-sm text-slate-400">
+                          {epics.find((epic) => epic.id === story.epic_id).name}
+                        </span>
+                      ) : null}
+                    </div>
                     <Badge
                       variant="flat"
                       color="primary"
                       size="sm"
                       disableOutline
                     >
-                      {notification.reason}
+                      {story.story_type}
                     </Badge>
                   </span>
                   {/* <div className="flex items-center justify-start space-x-2"> */}
