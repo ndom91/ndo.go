@@ -17,7 +17,7 @@ export default function HackerNews() {
       )
       if (res.status === 200) {
         const data = await res.json()
-        console.log('HN Data', data.hits)
+        /* console.log('HN Data', data.hits) */
         setPosts(data.hits)
       } else {
         throw new Error('Failed to fetch')
