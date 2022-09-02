@@ -16,7 +16,7 @@ export default function Home({ nextauth }) {
 
   useEffect(() => {
     function listener(e) {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey) && nextauth.user) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey) && nextauth?.user) {
         e.preventDefault()
         setOpen((o) => !o)
       }
