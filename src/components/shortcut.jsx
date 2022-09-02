@@ -11,9 +11,8 @@ export default function Shortcut() {
   const [filter, setFilter] = useState('')
   const [stories, setStories] = useState([])
   const [epics, setEpics] = useState([])
+  const [workflows, setWorkflows] = useState([])
   const [originalStories, setOriginalStories] = useState([])
-  const [comment, setComment] = useState([])
-  const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
     if (!filter && stories !== originalStories) setStories(originalStories)
@@ -30,6 +29,7 @@ export default function Shortcut() {
 
   const fetchNotifications = async () => {
     try {
+      // EPICS
       const epicRes = await fetch('https://api.app.shortcut.com/api/v3/epics', {
         headers: {
           'Shortcut-Token': process.env.NEXT_PUBLIC_SHORTCUT_KEY,
@@ -41,6 +41,28 @@ export default function Shortcut() {
         return epic.owner_ids.includes(SHORCUT_USER_ID)
       })
       setEpics(teamEpics)
+
+      // WORKFLOWS
+      const workflowRes = await fetch(
+        'https://api.app.shortcut.com/api/v3/workflows',
+        {
+          headers: {
+            'Shortcut-Token': process.env.NEXT_PUBLIC_SHORTCUT_KEY,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      const workflowData = await workflowRes.json()
+      const engWorkflow = workflowData.find(
+        (wf) => wf.id.toString() === '500000005'
+      )
+      const workflowStates = engWorkflow.states.map((workflow) => {
+        return {
+          id: workflow.id,
+          name: workflow.name,
+        }
+      })
+      setWorkflows(workflowStates)
 
       const res = await fetch(
         `https://api.app.shortcut.com/api/v3/search/stories?${new URLSearchParams(
@@ -58,7 +80,6 @@ export default function Shortcut() {
 
       if (res.status === 200) {
         const data = await res.json()
-        console.log('Shortcut Data', data.data)
         /* const workNotifications = data.filter((not) => { */
         /*   return wantedRepoOrgs.includes(not.repository?.owner?.login) */
         /* }) */
@@ -71,55 +92,6 @@ export default function Shortcut() {
     } catch (e) {
       console.error(e)
     }
-  }
-
-  const markAsRead = async (threadId) => {
-    try {
-      const res = await fetch(
-        `https://api.github.com/notifications/threads/${threadId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-            Accept: 'application/vnd.github+json',
-          },
-        }
-      )
-      if (res.status === 205) {
-        // toast.success('Marked as read')
-        console.log('Marked as read', threadId)
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  const fetchComments = async (post) => {
-    try {
-      const res = await fetch(
-        `http://hn.algolia.com/api/v1/search?tags=comment,story_${post.objectID}`
-      )
-      if (res.status === 200) {
-        const data = await res.json()
-        console.log('comment data', data)
-        setComment({ ...comment, title: post.title, items: data.hits })
-      } else {
-        throw new Error('Failed to fetch')
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  const openCommentModal = (e, post) => {
-    e.preventDefault()
-    fetchComments(post)
-    setOpenModal(!openModal)
-  }
-
-  const closeHandler = () => {
-    setOpenModal(false)
-    setComment({ ...comment, items: [] })
   }
 
   useEffect(() => {
@@ -178,32 +150,29 @@ export default function Shortcut() {
                     </Badge>
                     <div className="flex flex-grow flex-col items-start justify-center">
                       <span className="">{story.name}</span>
-                      {story.epic_id ? (
-                        <span className="text-sm text-slate-400">
-                          {epics.find((epic) => epic.id === story.epic_id).name}
-                        </span>
-                      ) : null}
+                      <div className="flex items-center justify-start">
+                        <Badge
+                          variant="flat"
+                          color="primary"
+                          size="sm"
+                          disableOutline
+                          className="mr-2"
+                        >
+                          {workflows.find(
+                            (wf) => wf.id === story.workflow_state_id
+                          )?.name ?? 'None'}
+                        </Badge>
+                        {story.epic_id ? (
+                          <span className="text-sm text-slate-400">
+                            {
+                              epics.find((epic) => epic.id === story.epic_id)
+                                .name
+                            }
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
-                    <Badge
-                      variant="flat"
-                      color="primary"
-                      size="sm"
-                      disableOutline
-                    >
-                      {story.story_type}
-                    </Badge>
                   </span>
-                  {/* <div className="flex items-center justify-start space-x-2"> */}
-                  {/* <span */}
-                  {/*   className="text-sm" */}
-                  {/*   onClick={(e) => openCommentModal(e, post)} */}
-                  {/* > */}
-                  {/*   {post.num_comments ?? 0} Comments */}
-                  {/* </span> */}
-                  {/*   <span className="text-sm font-extralight text-slate-400"> */}
-                  {/*     {timeAgo(notification.updated_at * 1000)} */}
-                  {/*   </span> */}
-                  {/* </div> */}
                 </a>
               </li>
             ))
@@ -227,58 +196,6 @@ export default function Shortcut() {
           )}
         </ul>
       </Card.Body>
-      <Modal
-        closeButton
-        aria-labelledby="modal-title"
-        width="40rem"
-        open={openModal}
-        onClose={closeHandler}
-      >
-        <Modal.Header className="flex justify-start">
-          <Text b className="text-left text-xl font-light">
-            {comment.title}
-          </Text>
-        </Modal.Header>
-        <Modal.Body className="overflow-y-scroll">
-          {comment.items?.length > 0 ? (
-            comment.items?.map((c) => (
-              <Row
-                key={c.objectID}
-                justify="space-between"
-                className="flex-col rounded-md border-2 border-gray-200 p-2"
-              >
-                <Text
-                  size={14}
-                  className="break-word text-ellipsis whitespace-pre-wrap "
-                  dangerouslySetInnerHTML={{
-                    __html: decodeHtml(c.comment_text),
-                  }}
-                />
-                <Text className="pt-2 text-sm font-light">
-                  <Badge
-                    isSquared
-                    variant="bordered"
-                    color="primary"
-                    className="mr-2"
-                  >
-                    {c.author}
-                  </Badge>
-                  {timeAgo(c.created_at_i * 1000)}
-                </Text>
-              </Row>
-            ))
-          ) : (
-            <div className="my-4 flex w-full justify-center">
-              <Badge variant="points" />
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button auto flat color="error" onClick={closeHandler}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </Card>
   )
 }

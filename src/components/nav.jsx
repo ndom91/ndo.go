@@ -47,44 +47,32 @@ export default function Nav() {
           height="32"
         />
       </Navbar.Brand>
-      <Navbar.Content
-        css={{
-          '@xs': {
-            w: '12%',
-            jc: 'flex-end',
-          },
-        }}
-      >
+      <Navbar.Content>
         <Dropdown placement="bottom-right">
-          <Navbar.Item>
-            <Dropdown.Trigger>
-              <Avatar
-                bordered
-                size="lg"
-                squared
-                zoomed
-                as="button"
-                color="gradient"
-                src={session?.user.image ?? '/favicon.png'}
-              />
-            </Dropdown.Trigger>
-          </Navbar.Item>
+          <Dropdown.Trigger>
+            <Avatar
+              bordered
+              size="lg"
+              squared
+              zoomed
+              as="button"
+              color="gradient"
+              src={session?.user.image ?? '/favicon.png'}
+            />
+          </Dropdown.Trigger>
           <Dropdown.Menu
             aria-label="User menu actions"
             disabledKeys={['profile']}
+            variant="flat"
             onAction={(key) => dropdownAction(key)}
           >
             <Dropdown.Item
               key="profile"
-              css={{ height: '$18' }}
               textValue="Sign in as"
+              className="flex "
             >
-              <Text color="inherit" css={{ d: 'flex' }}>
-                Signed in as
-              </Text>
-              <Text b color="inherit" css={{ d: 'flex' }}>
-                {session?.user.name}
-              </Text>
+              <span>Signed in as </span>
+              <span className="font-bold">{session?.user.name}</span>
             </Dropdown.Item>
             <Dropdown.Item key="settings" withDivider textValue="My Settings">
               My Settings

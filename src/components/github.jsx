@@ -3,7 +3,6 @@ import { Badge, Button, Row, Card, Text, Modal, Input } from '@nextui-org/react'
 import { signIn } from 'next-auth/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
 import { useSession } from 'next-auth/react'
-/* import { Octokit } from 'octokit' */
 
 const wantedRepoOrgs = ['checkly']
 
@@ -36,32 +35,18 @@ export default function Github() {
           all: false,
           participating: true,
           per_page: 50,
-          /* since: new Date('2022-08-30').toISOString(), */
         })}`,
         {
           headers: {
-            /* Authorization: `Bearer ${session.accessToken}`, */
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_PAT}`,
             Accept: 'application/vnd.github+json',
           },
         }
       )
-      /* const octokit = new Octokit({ */
-      /*   auth: session?.accessToken, */
-      /*   auth: process.env.NEXT_PUBLIC_GITHUB_PAT, */
-      /* }) */
-      const resIssues = await fetch(`https://api.github.com/notifications`, {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_PAT}`,
-          Accept: 'application/vnd.github+json',
-        },
-      })
-      const data2 = await resIssues.json()
-      /* console.log('checkly-webapp issues', data2) */
 
       if (res.status === 200) {
         const data = await res.json()
-        /* console.log('Github Data', data) */
+        console.log('Github Data', data)
         /* console.table( */
         /*   data.reduce((acc, val) => { */
         /*     if (!val) return */
@@ -77,7 +62,10 @@ export default function Github() {
         /*   return wantedRepoOrgs.includes(not.repository?.owner?.login) */
         /* }) */
         /* console.log('Github Data', workNotifications) */
-        setNotifications(data)
+        const githubNotifications = data.sort(
+          (a, b) => a.updated_at > b.updated_at
+        )
+        setNotifications(githubNotifications)
         setOriginalNotifications(data)
       } else {
         throw new Error('Failed to fetch')
@@ -183,25 +171,22 @@ export default function Github() {
                   className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-800"
                 >
                   <span className="flex w-full items-center justify-start gap-2 text-lg font-extralight">
-                    <Badge
-                      variant="flat"
-                      color="secondary"
-                      className=""
-                      disableOutline
-                    >
-                      {notification.repository.owner.login}
-                    </Badge>
-                    <span className="flex-grow">
-                      {notification.subject.title}
-                    </span>
-                    <Badge
-                      variant="flat"
-                      color="primary"
-                      size="sm"
-                      disableOutline
-                    >
-                      {notification.reason}
-                    </Badge>
+                    <div className="flex flex-col items-start justify-center">
+                      <span className="text-sm font-extralight text-slate-400">
+                        {notification.repository.owner.login}
+                      </span>
+                      <span className="flex-grow">
+                        {notification.subject.title}
+                      </span>
+                      <Badge
+                        variant="flat"
+                        color="primary"
+                        size="sm"
+                        disableOutline
+                      >
+                        {notification.reason}
+                      </Badge>
+                    </div>
                   </span>
                   {/* <div className="flex items-center justify-start space-x-2"> */}
                   {/* <span */}
