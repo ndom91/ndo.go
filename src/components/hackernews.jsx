@@ -78,7 +78,7 @@ export default function HackerNews() {
         <Avatar
           squared
           alt="HackerNews logo"
-          src="https://news.ycombinator.com/y18.gif"
+          src="icons/hn.svg"
           width="34px"
           height="34px"
         />
