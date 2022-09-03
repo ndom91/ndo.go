@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { Popover } from '@nextui-org/react'
 import { Command } from 'cmdk'
-import { Logo, FigmaIcon, YouTubeIcon } from './commandIcons'
 
 export default function CommandMenu({ close }) {
   const [value, setValue] = useState('linear')
@@ -72,14 +71,20 @@ export default function CommandMenu({ close }) {
                       categoryIcon={<ChecklyIcon />}
                       close={close}
                     >
-                      <Logo>
+                      <div
+                        className="flex h-full items-center justify-center"
+                        style={{
+                          width: 20,
+                          height: 20,
+                        }}
+                      >
                         <img
                           src={`/icons/${app.img}`}
                           alt={`${app.name} Logo`}
-                          height={24}
-                          width={24}
+                          height={20}
+                          width={20}
                         />
-                      </Logo>
+                      </div>
                       <div className="flex w-full items-center justify-between gap-4 overflow-hidden truncate">
                         <span>{app.name}</span>
                         <span className="overflow-hidden truncate whitespace-nowrap text-xs text-white opacity-30">
@@ -88,18 +93,6 @@ export default function CommandMenu({ close }) {
                       </div>
                     </Item>
                   ))}
-                <Item value="Figma" url="https://figma.com" close={close}>
-                  <Logo>
-                    <FigmaIcon />
-                  </Logo>
-                  Figma
-                </Item>
-                <Item value="YouTube" url="https://youtube.com" close={close}>
-                  <Logo>
-                    <YouTubeIcon />
-                  </Logo>
-                  YouTube
-                </Item>
               </Command.Group>
               <Command.Group heading="Commands">
                 <Command.Item
@@ -108,14 +101,12 @@ export default function CommandMenu({ close }) {
                     setPages([...pages, 'pull-request'])
                   }}
                 >
-                  <Logo>
-                    <img
-                      height="20"
-                      width="20"
-                      src="/icons/github.svg"
-                      alt="Github Logo"
-                    />
-                  </Logo>
+                  <img
+                    height="20"
+                    width="20"
+                    src="/icons/github.svg"
+                    alt="Github Logo"
+                  />
                   Create new PR
                   <span cmdk-raycast-meta="" className="flex">
                     <ChevronRight />
@@ -126,14 +117,12 @@ export default function CommandMenu({ close }) {
                     window.open('https://app.shortcut.com/checkly/stories/new')
                   }}
                 >
-                  <Logo>
-                    <img
-                      height="20"
-                      width="20"
-                      src="/icons/shortcut.svg"
-                      alt="Github Logo"
-                    />
-                  </Logo>
+                  <img
+                    height="20"
+                    width="20"
+                    src="/icons/shortcut.svg"
+                    alt="Github Logo"
+                  />
                   Create new story
                   <span cmdk-raycast-meta="" className="flex">
                     Command
