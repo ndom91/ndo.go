@@ -8,7 +8,7 @@ Personal New-Tab Page Playground
 
 - HackerNews Top Stories
 - Personal `cmd`+`k` Quick-Start bar
-- Shortcut/Github Notifications✨
+- Shortcut / Github Notifications
 
 ## 📝 License
 
