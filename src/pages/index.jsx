@@ -57,7 +57,10 @@ export default function Home({ nextauth }) {
           </>
         )}
       </AnimatePresence>
-      <Grid.Container className="h-full space-x-8 p-6" wrap="nowrap">
+      <Grid.Container
+        className="h-full space-x-2 p-2 xl:space-x-8 xl:p-6"
+        wrap="nowrap"
+      >
         <Grid
           justify="flex-start"
           alignItems="stretch"

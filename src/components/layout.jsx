@@ -1,4 +1,4 @@
-import { Container, Row, Col, Grid } from '@nextui-org/react'
+import { Container, Row, Col } from '@nextui-org/react'
 import Nav from '@/components/nav'
 
 export default function Layout({ children }) {

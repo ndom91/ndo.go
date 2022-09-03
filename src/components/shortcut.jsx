@@ -5,6 +5,11 @@ import { decodeHtml, timeAgo } from '../lib/helpers.js'
 import { useSession } from 'next-auth/react'
 
 const SHORCUT_USER_ID = '600168ef-5cec-450b-90ba-4a497a949263'
+const COMPLETE_STATE_IDS = [
+  500000971, // Design - Done
+  500000011, // Engineering - Completed
+  500016761, // Engineering - Unscheduled
+]
 
 export default function Shortcut() {
   const { data: session } = useSession()
@@ -53,13 +58,14 @@ export default function Shortcut() {
         }
       )
       const workflowData = await workflowRes.json()
-      const engWorkflow = workflowData.find(
-        (wf) => wf.id.toString() === '500000005'
-      )
-      const workflowStates = engWorkflow.states.map((workflow) => {
+      const workflowStates = workflowData.map((workflow) => {
         return {
           id: workflow.id,
           name: workflow.name,
+          states: workflow.states.map((state) => ({
+            name: state.name,
+            id: state.id,
+          })),
         }
       })
       setWorkflows(workflowStates)
@@ -80,11 +86,12 @@ export default function Shortcut() {
 
       if (res.status === 200) {
         const data = await res.json()
-        /* const workNotifications = data.filter((not) => { */
-        /*   return wantedRepoOrgs.includes(not.repository?.owner?.login) */
-        /* }) */
-        /* console.log('Github Data', workNotifications) */
-        setStories(data.data)
+        setStories(
+          data.data.filter(
+            (story) => !COMPLETE_STATE_IDS.includes(story.workflow_state_id)
+          )
+        )
+        console.log('stories', stories)
         setOriginalStories(data.data)
       } else {
         throw new Error('Failed to fetch')
@@ -141,7 +148,7 @@ export default function Shortcut() {
                   <span className="flex w-full items-center justify-start gap-2 text-lg font-extralight">
                     <Badge
                       variant="flat"
-                      color="secondary"
+                      color="primary"
                       size="md"
                       disableOutline
                       className="w-14"
@@ -149,27 +156,36 @@ export default function Shortcut() {
                       {story.id}
                     </Badge>
                     <div className="flex flex-grow flex-col items-start justify-center">
+                      {story.epic_id ? (
+                        <span className="font-mono text-sm font-light text-slate-400">
+                          {epics.find((epic) => epic.id === story.epic_id).name}
+                        </span>
+                      ) : null}
                       <span className="">{story.name}</span>
                       <div className="flex items-center justify-start">
                         <Badge
                           variant="flat"
                           color="primary"
-                          size="sm"
+                          size="md"
                           disableOutline
-                          className="mr-2"
+                          className="mr-2 text-sm uppercase text-slate-300"
                         >
-                          {workflows.find(
-                            (wf) => wf.id === story.workflow_state_id
-                          )?.name ?? 'None'}
+                          {story.story_type.charAt(0)}
                         </Badge>
-                        {story.epic_id ? (
-                          <span className="text-sm text-slate-400">
-                            {
-                              epics.find((epic) => epic.id === story.epic_id)
-                                .name
-                            }
-                          </span>
-                        ) : null}
+                        <span className="mr-2 text-sm text-slate-300">
+                          {
+                            workflows.find((wf) => wf.id === story.workflow_id)
+                              ?.name
+                          }{' '}
+                          -{' '}
+                          {
+                            workflows
+                              .find((wf) => wf.id === story.workflow_id)
+                              ?.states.find(
+                                (state) => state.id === story.workflow_state_id
+                              )?.name
+                          }
+                        </span>
                       </div>
                     </div>
                   </span>
