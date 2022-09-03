@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   Avatar,
+  Loading,
   Badge,
   Button,
   Row,
@@ -228,7 +229,7 @@ export default function Github() {
             </div>
           ) : (
             <div className="my-4 flex w-full justify-center">
-              <Badge variant="points" />
+              <Loading type="points-opacity" />
             </div>
           )}
         </ul>
@@ -275,7 +276,7 @@ export default function Github() {
             ))
           ) : (
             <div className="my-4 flex w-full justify-center">
-              <Badge variant="points" />
+              <Loading type="points-opacity" />
             </div>
           )}
         </Modal.Body>

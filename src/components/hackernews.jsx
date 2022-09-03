@@ -3,6 +3,7 @@ import {
   Avatar,
   Badge,
   Button,
+  Loading,
   Row,
   Card,
   Grid,
@@ -124,7 +125,7 @@ export default function HackerNews() {
             ))
           ) : (
             <div className="my-4 flex w-full justify-center">
-              <Badge variant="points" />
+              <Loading type="points-opacity" />
             </div>
           )}
         </ul>
@@ -171,7 +172,7 @@ export default function HackerNews() {
             ))
           ) : (
             <div className="my-4 flex w-full justify-center">
-              <Badge variant="points" />
+              <Loading type="points-opacity" />
             </div>
           )}
         </Modal.Body>

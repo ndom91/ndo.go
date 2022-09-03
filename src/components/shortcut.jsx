@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Avatar, Badge, Button, Card, Input } from '@nextui-org/react'
+import { Avatar, Badge, Button, Card, Input, Loading } from '@nextui-org/react'
 import ShortcutCard from '@/components/shortcutCard'
 import { signIn } from 'next-auth/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
@@ -215,7 +215,7 @@ export default function Shortcut() {
             </div>
           ) : (
             <div className="my-4 flex w-full justify-center">
-              <Badge variant="points" />
+              <Loading type="points-opacity" />
             </div>
           )}
         </ul>
