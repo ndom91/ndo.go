@@ -1,12 +1,14 @@
-# ndo.so
+# ✨ ndo.so
 
 Personal New-Tab Page Playground
 
+![Screenshot](/public/screenshot.png)
+
 ## 🏗 Features
 
-- HackerNews + ProductHunt lists
-- cmd+k Quick-Start bar
-- Auto-generated Shortcut/Github todo lists
+- HackerNews Top Stories
+- Personal `cmd`+`k` Quick-Start bar
+- Shortcut/Github Notifications✨
 
 ## 📝 License
 
