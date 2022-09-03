@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Badge, Button, Row, Card, Text, Modal, Input } from '@nextui-org/react'
+import {
+  Avatar,
+  Badge,
+  Button,
+  Row,
+  Card,
+  Text,
+  Modal,
+  Input,
+} from '@nextui-org/react'
 import { signIn } from 'next-auth/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
 import { useSession } from 'next-auth/react'
@@ -136,9 +145,11 @@ export default function Github() {
     >
       <Card.Header className="flex justify-between space-x-2 py-6">
         <div className="flex items-center justify-start gap-2">
-          <img
+          <Avatar
+            squared
             alt="GitHub Logo"
-            src="/icons/github.svg"
+            src="/icons/github2.svg"
+            className="github-avatar"
             width="34px"
             height="34px"
           />

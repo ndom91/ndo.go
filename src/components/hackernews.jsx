@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Badge, Button, Row, Card, Grid, Text, Modal } from '@nextui-org/react'
+import {
+  Avatar,
+  Badge,
+  Button,
+  Row,
+  Card,
+  Grid,
+  Text,
+  Modal,
+} from '@nextui-org/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
 
 /**
@@ -66,7 +75,8 @@ export default function HackerNews() {
       variant="shadow"
     >
       <Card.Header className="space-x-2 py-6">
-        <img
+        <Avatar
+          squared
           alt="HackerNews logo"
           src="https://news.ycombinator.com/y18.gif"
           width="34px"
