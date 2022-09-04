@@ -38,14 +38,7 @@ export default function Nav() {
       className="bg-none"
     >
       <Navbar.Brand>
-        <Avatar
-          squared
-          size="lg"
-          src="/favicon.png"
-          alt="ndo logo"
-          width="32"
-          height="32"
-        />
+        <Avatar squared size="lg" src="/favicon.png" alt="ndo logo" />
       </Navbar.Brand>
       <Navbar.Content>
         <Dropdown placement="bottom-right">
