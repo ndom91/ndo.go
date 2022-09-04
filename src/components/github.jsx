@@ -141,7 +141,7 @@ export default function Github() {
   return (
     <Card
       css={{ p: '$6' }}
-      className="max-h-full flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
+      className="max-h-full flex-shrink-0 border-0 shadow-2xl dark:bg-gray-900/95"
       variant="shadow"
     >
       <Card.Header className="flex justify-between space-x-2 py-6">
@@ -180,7 +180,7 @@ export default function Github() {
                     .replace('pulls', 'pull')}
                   target="_blank"
                   rel="noopener noreferer noreferrer"
-                  className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-800"
+                  className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
                 >
                   <span className="flex w-full items-center justify-start gap-2 text-lg font-extralight">
                     <div className="flex flex-col items-start justify-center">

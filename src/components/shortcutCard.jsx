@@ -20,7 +20,7 @@ export default function ShortcutCard({ story, workflows, epics }) {
         href={story.app_url}
         target="_blank"
         rel="noopener noreferer noreferrer"
-        className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-800"
+        className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
       >
         <div className="flex flex-grow flex-col items-start justify-center space-y-1">
           {story.epic_id ? (

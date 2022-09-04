@@ -72,7 +72,7 @@ export default function HackerNews() {
   return (
     <Card
       css={{ p: '$6' }}
-      className="max-h-full w-full flex-shrink-0 border-0 bg-gray-900/95 shadow-2xl"
+      className="max-h-full w-full flex-shrink-0 border-0 shadow-2xl dark:bg-gray-900/95"
       variant="shadow"
     >
       <Card.Header className="space-x-2 py-6">
@@ -94,7 +94,7 @@ export default function HackerNews() {
                   href={post.url}
                   target="_blank"
                   rel="noopener noreferer noreferrer"
-                  className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-800"
+                  className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
                 >
                   <div className="flex justify-start">
                     <span className="text-lg font-extralight">
