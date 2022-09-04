@@ -87,13 +87,12 @@ export default function Shortcut() {
 
       if (res.status === 200) {
         const data = await res.json()
-        setStories(
-          data.data.filter(
-            (story) => !COMPLETE_STATE_IDS.includes(story.workflow_state_id)
-          )
+        const stories = data.data.filter(
+          (story) => !COMPLETE_STATE_IDS.includes(story.workflow_state_id)
         )
         console.log('stories', stories)
-        setOriginalStories(data.data)
+        setStories(stories)
+        setOriginalStories(stories)
       } else {
         throw new Error('Failed to fetch')
       }

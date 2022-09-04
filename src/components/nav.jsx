@@ -60,18 +60,14 @@ export default function Nav() {
             onAction={(key) => dropdownAction(key)}
           >
             {session?.user.name ? (
-              <Dropdown.Item
-                key="profile"
-                textValue="Sign in as"
-                className="flex "
-              >
-                <span>Signed in as </span>
+              <Dropdown.Item key="profile" className="flex">
                 <span className="font-bold">{session?.user.name}</span>
               </Dropdown.Item>
             ) : null}
             <Dropdown.Item
               key="theme"
               textValue="Theme"
+              withDivider={!!session?.user.name}
               icon={
                 <svg
                   height="24"
