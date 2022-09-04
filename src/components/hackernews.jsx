@@ -138,9 +138,7 @@ export default function HackerNews() {
         onClose={closeHandler}
       >
         <Modal.Header className="flex justify-start">
-          <Text b className="text-left text-xl font-light">
-            {comment.title}
-          </Text>
+          <div className="text-left text-xl font-light">{comment.title}</div>
         </Modal.Header>
         <Modal.Body className="overflow-y-scroll">
           {comment.items?.length > 0 ? (
@@ -150,24 +148,24 @@ export default function HackerNews() {
                 justify="space-between"
                 className="flex-col rounded-md border-2 border-gray-200 p-2"
               >
-                <Text
+                <div
                   size={14}
                   className="break-word text-ellipsis whitespace-pre-wrap "
                   dangerouslySetInnerHTML={{
                     __html: decodeHtml(c.comment_text),
                   }}
                 />
-                <Text className="pt-2 text-sm font-light">
+                <div className="space-x-2 pt-2 text-sm font-light">
+                  <span className="font-bold">{c.author}</span>
                   <Badge
                     isSquared
                     variant="bordered"
                     color="primary"
-                    className="mr-2"
+                    className=""
                   >
-                    {c.author}
+                    {timeAgo(c.created_at_i * 1000)}
                   </Badge>
-                  {timeAgo(c.created_at_i * 1000)}
-                </Text>
+                </div>
               </Row>
             ))
           ) : (
