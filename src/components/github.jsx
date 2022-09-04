@@ -18,6 +18,7 @@ const wantedRepoOrgs = ['checkly']
 
 export default function Github() {
   const { data: session } = useSession()
+  const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
   const [notifications, setNotifications] = useState([])
   const [originalNotifications, setOriginalNotifications] = useState([])
@@ -39,6 +40,7 @@ export default function Github() {
   }, [filter])
 
   const fetchNotifications = async () => {
+    setLoading(true)
     try {
       const res = await fetch(
         `https://api.github.com/notifications?${new URLSearchParams({
@@ -82,6 +84,8 @@ export default function Github() {
       }
     } catch (e) {
       console.error(e)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -200,17 +204,6 @@ export default function Github() {
                       </Badge>
                     </div>
                   </span>
-                  {/* <div className="flex items-center justify-start space-x-2"> */}
-                  {/* <span */}
-                  {/*   className="text-sm" */}
-                  {/*   onClick={(e) => openCommentModal(e, post)} */}
-                  {/* > */}
-                  {/*   {post.num_comments ?? 0} Comments */}
-                  {/* </span> */}
-                  {/*   <span className="text-sm font-extralight text-slate-400"> */}
-                  {/*     {timeAgo(notification.updated_at * 1000)} */}
-                  {/*   </span> */}
-                  {/* </div> */}
                 </a>
               </li>
             ))
@@ -227,10 +220,12 @@ export default function Github() {
                 to continue
               </span>
             </div>
-          ) : (
+          ) : loading ? (
             <div className="my-4 flex w-full justify-center">
               <Loading type="points-opacity" />
             </div>
+          ) : (
+            <div className="my-4 flex w-full justify-center">No Results</div>
           )}
         </ul>
       </Card.Body>
