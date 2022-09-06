@@ -12,7 +12,7 @@ const COMPLETE_STATE_IDS = [
   500016761, // Engineering - Unscheduled
 ]
 
-export default function Shortcut() {
+export default function ShortcutList() {
   const { data: session } = useSession()
   const [filter, setFilter] = useState('')
   const [loading, setLoading] = useState(true)

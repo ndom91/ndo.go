@@ -7,9 +7,9 @@ import { authOptions } from '@/api/auth/[...nextauth]'
 import Layout from '@/components/layout'
 import CommandMenu from '@/components/commandMenu'
 import CommandWrapper from '@/components/commandWrapper'
-import HackerNews from '@/components/hackernews'
-import Github from '@/components/github'
-import Shortcut from '@/components/shortcut'
+import HackerNewsList from '@/components/hackernewsList'
+import GithubList from '@/components/githubList'
+import ShortcutList from '@/components/shortcutList'
 
 export default function Home({ nextauth }) {
   const [open, setOpen] = useState(false)
@@ -67,7 +67,7 @@ export default function Home({ nextauth }) {
           className="h-full"
           xs={4}
         >
-          <HackerNews className="h-full" />
+          <HackerNewsList className="h-full" />
         </Grid>
         <Grid
           justify="flex-start"
@@ -75,7 +75,7 @@ export default function Home({ nextauth }) {
           className="h-full"
           xs={4}
         >
-          <Github />
+          <GithubList />
         </Grid>
         <Grid
           justify="flex-start"
@@ -83,7 +83,7 @@ export default function Home({ nextauth }) {
           className="h-full"
           xs={4}
         >
-          <Shortcut />
+          <ShortcutList />
         </Grid>
       </Grid.Container>
     </Layout>

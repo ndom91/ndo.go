@@ -15,7 +15,7 @@ import { decodeHtml, timeAgo } from '../lib/helpers.js'
 /**
  * Algolia HN API: https://hn.algolia.com/api
  */
-export default function HackerNews() {
+export default function HackerNewsList() {
   const [posts, setPosts] = useState([])
   const [comment, setComment] = useState([])
   const [openModal, setOpenModal] = useState(false)

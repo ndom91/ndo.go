@@ -17,7 +17,7 @@ import { useSession } from 'next-auth/react'
 
 const wantedRepoOrgs = ['checkly']
 
-export default function Github() {
+export default function GithubList() {
   const { data: session } = useSession()
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
