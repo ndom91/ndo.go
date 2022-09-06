@@ -1,6 +1,9 @@
 import { Badge, Text } from '@nextui-org/react'
+import { useSession } from 'next-auth/react'
 
 export default function GithuCard({ notification }) {
+  const { data: session } = useSession()
+
   const markAsRead = async (threadId) => {
     try {
       const res = await fetch(
