@@ -1,6 +1,27 @@
 import { Badge, Text } from '@nextui-org/react'
 
 export default function GithuCard({ notification }) {
+  const markAsRead = async (threadId) => {
+    try {
+      const res = await fetch(
+        `https://api.github.com/notifications/threads/${threadId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+            Accept: 'application/vnd.github+json',
+          },
+        }
+      )
+      if (res.status === 205) {
+        // toast.success('Marked as read')
+        console.log('Marked as read', threadId)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   return (
     <li key={notification.id} className="m-0 p-0">
       <a
@@ -14,9 +35,9 @@ export default function GithuCard({ notification }) {
         <span className="flex w-full items-center justify-start gap-2 text-lg font-extralight">
           <div className="flex flex-col items-start justify-center">
             <span className="text-sm font-extralight text-slate-400">
-              {notification.repository.owner.login}
+              {notification.repository?.owner?.login}
             </span>
-            <span className="flex-grow">{notification.subject.title}</span>
+            <span className="flex-grow">{notification.subject?.title}</span>
             <Badge variant="flat" color="primary" size="sm" disableOutline>
               {notification.reason}
             </Badge>
