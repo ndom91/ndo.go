@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
 import { useSession } from 'next-auth/react'
 
-const SHORCUT_USER_ID = '600168ef-5cec-450b-90ba-4a497a949263'
+const SHORCUT_USER_ID = '600168ef-5cec-450b-90ba-4a497a949263' // ndom91
 const COMPLETE_STATE_IDS = [
   500000971, // Design - Done
   500000011, // Engineering - Completed

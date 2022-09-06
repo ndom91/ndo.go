@@ -1,6 +1,23 @@
 import { unstable_getServerSession } from 'next-auth/next'
 import { authOptions } from '@/api/auth/[...nextauth]'
 
+/**
+ * @typedef App
+ * @param {string} name
+ * @param {string} url
+ * @param {string} img
+ */
+
+/**
+ * @typedef Category
+ * @param {string} category
+ * @param {App[]} apps
+ */
+
+/**
+ * @desc List of apps to display in CommandMenu suggestions
+ * @return Promise<Category[]>
+ */
 export default async function handler(req, res) {
   const session = await unstable_getServerSession(req, res, authOptions)
 
