@@ -47,10 +47,10 @@ export default function Nav() {
               bordered
               size="lg"
               squared
-              zoomed
+              zoomed={!!session?.user.image}
               as="button"
               color="gradient"
-              src={session?.user.image ?? '/favicon.png'}
+              src={session?.user.image ?? null}
             />
           </Dropdown.Trigger>
           <Dropdown.Menu

@@ -6,11 +6,9 @@ import {
   Loading,
   Row,
   Card,
-  Grid,
-  Text,
   Modal,
 } from '@nextui-org/react'
-import { decodeHtml, timeAgo } from '../lib/helpers.js'
+import { decodeHtml, timeAgo } from '@/lib/helpers.js'
 
 /**
  * Algolia HN API: https://hn.algolia.com/api
@@ -94,7 +92,7 @@ export default function HackerNewsList() {
                   href={post.url}
                   target="_blank"
                   rel="noopener noreferer noreferrer"
-                  className="flex flex-col items-start justify-start rounded-md p-2 hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+                  className="flex flex-col items-start justify-start rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800"
                 >
                   <div className="flex justify-start">
                     <span className="text-lg font-extralight">
@@ -105,13 +103,13 @@ export default function HackerNewsList() {
                     <Badge
                       variant="flat"
                       color="primary"
-                      className=""
+                      size="sm"
                       disableOutline
                     >
                       {post.points}
                     </Badge>
                     <span
-                      className="text-sm"
+                      className="text-sm hover:cursor-pointer"
                       onClick={(e) => openCommentModal(e, post)}
                     >
                       {post.num_comments ?? 0} Comments
@@ -140,31 +138,26 @@ export default function HackerNewsList() {
         <Modal.Header className="flex justify-start">
           <div className="text-left text-xl font-light">{comment.title}</div>
         </Modal.Header>
-        <Modal.Body className="overflow-y-scroll">
+        <Modal.Body className="overflow-y-scroll hover:cursor-default">
           {comment.items?.length > 0 ? (
             comment.items?.map((c) => (
               <Row
                 key={c.objectID}
                 justify="space-between"
-                className="flex-col rounded-md border-2 border-gray-200 p-2"
+                className="flex-col rounded-lg border-2 border-gray-200 dark:border-slate-800"
               >
                 <div
                   size={14}
-                  className="break-word text-ellipsis whitespace-pre-wrap "
+                  className="break-word text-ellipsis whitespace-pre-wrap p-2"
                   dangerouslySetInnerHTML={{
                     __html: decodeHtml(c.comment_text),
                   }}
                 />
-                <div className="space-x-2 pt-2 text-sm font-light">
+                <div className="flex w-full justify-between space-x-2 p-2 text-sm font-light dark:bg-slate-800">
                   <span className="font-bold">{c.author}</span>
-                  <Badge
-                    isSquared
-                    variant="bordered"
-                    color="primary"
-                    className=""
-                  >
+                  <div className="text-sm">
                     {timeAgo(c.created_at_i * 1000)}
-                  </Badge>
+                  </div>
                 </div>
               </Row>
             ))
@@ -180,17 +173,6 @@ export default function HackerNewsList() {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      {/* <Card.Footer> */}
-      {/*   <Link */}
-      {/*     icon */}
-      {/*     color="primary" */}
-      {/*     target="_blank" */}
-      {/*     href="https://github.com/nextui-org/nextui" */}
-      {/*   > */}
-      {/*     Visit source code on GitHub. */}
-      {/*   </Link> */}
-      {/* </Card.Footer> */}
     </Card>
   )
 }

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Avatar, Loading, Card, Input } from '@nextui-org/react'
-import { signIn } from 'next-auth/react'
-import { decodeHtml, timeAgo } from '../lib/helpers.js'
-import GithubCard from './githubCard'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
+import { decodeHtml, timeAgo } from '@/lib/helpers.js'
+import GithubCard from '@/components/githubCard'
 
 const wantedRepoOrgs = ['checkly']
 

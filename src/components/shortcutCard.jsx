@@ -25,7 +25,7 @@ export default function ShortcutCard({ story, workflows, epics }) {
         <div className="flex flex-grow flex-col items-start justify-center space-y-1">
           {story.epic_id ? (
             <div className="text-sm font-light text-slate-400">
-              {epics.find((epic) => epic.id === story.epic_id).name}
+              {epics.find((epic) => epic.id === story.epic_id)?.name}
             </div>
           ) : null}
           <div className="text-lg font-extralight">{story.name}</div>

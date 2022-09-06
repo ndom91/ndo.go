@@ -1,5 +1,6 @@
 import { Badge, Text } from '@nextui-org/react'
 import { useSession } from 'next-auth/react'
+import { timeAgo } from '@/lib/helpers.js'
 
 export default function GithuCard({ notification }) {
   const { data: session } = useSession()
@@ -37,13 +38,18 @@ export default function GithuCard({ notification }) {
       >
         <span className="flex w-full items-center justify-start gap-2 text-lg font-extralight">
           <div className="flex flex-col items-start justify-center">
-            <span className="text-sm font-extralight text-slate-400">
-              {notification.repository?.owner?.login}
-            </span>
             <span className="flex-grow">{notification.subject?.title}</span>
-            <Badge variant="flat" color="primary" size="sm" disableOutline>
-              {notification.reason}
-            </Badge>
+            <div className="flex items-center justify-start space-x-2">
+              <Badge variant="flat" color="primary" size="sm" disableOutline>
+                {notification.repository?.owner?.login}
+              </Badge>
+              <Badge variant="flat" color="secondary" size="sm" disableOutline>
+                {notification.reason}
+              </Badge>
+              <div className="text-sm font-extralight text-slate-400">
+                {timeAgo(notification.updated_at)}
+              </div>
+            </div>
           </div>
         </span>
       </a>
