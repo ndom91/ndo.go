@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Avatar, Badge, Button, Card, Input, Loading } from '@nextui-org/react'
 import { signIn, useSession } from 'next-auth/react'
 import ShortcutCard from '@/components/shortcutCard'
@@ -26,16 +26,18 @@ export default function ShortcutList() {
     if (!filter && stories !== originalStories) setStories(originalStories)
 
     const filteredStories = originalStories.filter((story) => {
-      if (story.name.includes(filter)) {
+      if (story.name.toLowerCase().includes(filter.toLowerCase())) {
         return story
       } else if (story.id.toString().includes(filter)) {
         return story
+        /* } else if (story.id.toString().includes(filter)) { */
+        /*   return story */
       }
     })
     setStories(filteredStories)
   }, [filter])
 
-  const fetchNotifications = async () => {
+  const fetchStories = useCallback(async () => {
     setLoading(true)
     try {
       // MEMBERS
@@ -123,7 +125,7 @@ export default function ShortcutList() {
           .filter(
             (story) => !COMPLETE_STATE_IDS.includes(story.workflow_state_id)
           )
-          .sort((a, b) => a.updated_at > b.updated_at)
+          .sort((a, b) => a.updated_at < b.updated_at)
         setStories(stories)
         setOriginalStories(stories)
       } else {
@@ -134,11 +136,11 @@ export default function ShortcutList() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [session?.user?.email, shortcutUserId])
 
   useEffect(() => {
-    session?.user && fetchNotifications()
-  }, [session?.user])
+    session?.user && fetchStories()
+  }, [session?.user, fetchStories])
 
   return (
     <Card
@@ -172,7 +174,7 @@ export default function ShortcutList() {
       </Card.Header>
       <Card.Body className="m-0 px-1 py-0">
         <ul className="flex flex-col gap-2">
-          {stories?.length > 0 && session?.user ? (
+          {stories?.length > 0 && epics && workflows && session?.user ? (
             stories.map((story) => (
               <ShortcutCard
                 epics={epics}
