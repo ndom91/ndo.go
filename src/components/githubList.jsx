@@ -1,15 +1,5 @@
 import { useEffect, useState } from 'react'
-import {
-  Avatar,
-  Loading,
-  Badge,
-  Button,
-  Row,
-  Card,
-  Text,
-  Modal,
-  Input,
-} from '@nextui-org/react'
+import { Avatar, Loading, Card, Input } from '@nextui-org/react'
 import { signIn } from 'next-auth/react'
 import { decodeHtml, timeAgo } from '../lib/helpers.js'
 import GithubCard from './githubCard'
@@ -59,25 +49,17 @@ export default function GithubList() {
 
       if (res.status === 200) {
         const data = await res.json()
-        console.log('Github Data', data)
-        /* console.table( */
-        /*   data.reduce((acc, val) => { */
-        /*     if (!val) return */
-        /*     if (acc[val?.repository?.owner?.login]) { */
-        /*       acc[val.repository.owner.login]++ */
-        /*     } else { */
-        /*       acc[val.repository.owner.login] = 1 */
-        /*     } */
-        /*     return acc */
-        /*   }, {}) */
-        /* ) */
-        /* const workNotifications = data.filter((not) => { */
-        /*   return wantedRepoOrgs.includes(not.repository?.owner?.login) */
-        /* }) */
-        /* console.log('Github Data', workNotifications) */
-        const githubNotifications = data.sort(
-          (a, b) => a.updated_at > b.updated_at
-        )
+
+        const githubNotifications = data
+          .filter((data) => {
+            // Don't include notifications about my own commits to my own PRs
+            return !(
+              data.reason === 'author' &&
+              data.repository?.owner?.login === 'ndom91'
+            )
+          })
+          .sort((a, b) => a.updated_at > b.updated_at)
+
         setNotifications(githubNotifications)
         setOriginalNotifications(data)
       } else {
@@ -88,55 +70,6 @@ export default function GithubList() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const markAsRead = async (threadId) => {
-    try {
-      const res = await fetch(
-        `https://api.github.com/notifications/threads/${threadId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-            Accept: 'application/vnd.github+json',
-          },
-        }
-      )
-      if (res.status === 205) {
-        // toast.success('Marked as read')
-        console.log('Marked as read', threadId)
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  const fetchComments = async (post) => {
-    try {
-      const res = await fetch(
-        `http://hn.algolia.com/api/v1/search?tags=comment,story_${post.objectID}`
-      )
-      if (res.status === 200) {
-        const data = await res.json()
-        /* console.log('comment data', data) */
-        setComment({ ...comment, title: post.title, items: data.hits })
-      } else {
-        throw new Error('Failed to fetch')
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  const openCommentModal = (e, post) => {
-    e.preventDefault()
-    fetchComments(post)
-    setOpenModal(!openModal)
-  }
-
-  const closeHandler = () => {
-    setOpenModal(false)
-    setComment({ ...comment, items: [] })
   }
 
   useEffect(() => {
@@ -202,58 +135,6 @@ export default function GithubList() {
           )}
         </ul>
       </Card.Body>
-      <Modal
-        closeButton
-        aria-labelledby="modal-title"
-        width="40rem"
-        open={openModal}
-        onClose={closeHandler}
-      >
-        <Modal.Header className="flex justify-start">
-          <Text b className="text-left text-xl font-light">
-            {comment.title}
-          </Text>
-        </Modal.Header>
-        <Modal.Body className="overflow-y-scroll">
-          {comment.items?.length > 0 ? (
-            comment.items?.map((c) => (
-              <Row
-                key={c.objectID}
-                justify="space-between"
-                className="flex-col rounded-md border-2 border-gray-200 p-2"
-              >
-                <Text
-                  size={14}
-                  className="break-word text-ellipsis whitespace-pre-wrap "
-                  dangerouslySetInnerHTML={{
-                    __html: decodeHtml(c.comment_text),
-                  }}
-                />
-                <Text className="pt-2 text-sm font-light">
-                  <Badge
-                    isSquared
-                    variant="bordered"
-                    color="primary"
-                    className="mr-2"
-                  >
-                    {c.author}
-                  </Badge>
-                  {timeAgo(c.created_at_i * 1000)}
-                </Text>
-              </Row>
-            ))
-          ) : (
-            <div className="my-4 flex w-full justify-center">
-              <Loading type="points-opacity" />
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button auto flat color="error" onClick={closeHandler}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </Card>
   )
 }
