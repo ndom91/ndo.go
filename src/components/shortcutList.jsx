@@ -2,20 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { Avatar, Badge, Button, Card, Input, Loading } from '@nextui-org/react'
 import { signIn, useSession } from 'next-auth/react'
 import ShortcutCard from '@/components/shortcutCard'
-import { decodeHtml, timeAgo } from '@/lib/helpers.js'
-
-const SHORCUT_NDOM91_ID = '600168ef-5cec-450b-90ba-4a497a949263' // ndom91
-const COMPLETE_STATE_IDS = [
-  500000971, // Design - Done
-  500000011, // Engineering - Completed
-  500016761, // Engineering - Unscheduled
-]
 
 export default function ShortcutList() {
   const { data: session } = useSession()
   const [filter, setFilter] = useState('')
   const [loading, setLoading] = useState(true)
-  const [shortcutUserId, setShortcutUserId] = useState('')
   const [stories, setStories] = useState([])
   const [epics, setEpics] = useState([])
   const [members, setMembers] = useState([])
@@ -30,8 +21,6 @@ export default function ShortcutList() {
         return story
       } else if (story.id.toString().includes(filter)) {
         return story
-        /* } else if (story.id.toString().includes(filter)) { */
-        /*   return story */
       }
     })
     setStories(filteredStories)
@@ -40,103 +29,28 @@ export default function ShortcutList() {
   const fetchStories = useCallback(async () => {
     setLoading(true)
     try {
-      // MEMBERS
-      const memberRes = await fetch(
-        'https://api.app.shortcut.com/api/v3/members',
-        {
-          headers: {
-            'Shortcut-Token': process.env.NEXT_PUBLIC_SHORTCUT_KEY,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      const memberData = await memberRes.json()
-      const activeMembers = memberData
-        .filter((member) => {
-          return !member.disabled && !member.profile.deactivated
-        })
-        .map((member) => {
-          return {
-            id: member.id,
-            name: member.profile.name,
-            email: member.profile.email_address,
-          }
-        })
-
-      setMembers(activeMembers)
-      setShortcutUserId(
-        activeMembers.find((member) => member.email === session.user.email)
-          ?.id ?? SHORCUT_NDOM91_ID
+      const shortcutDataRes = await fetch(
+        `/api/shortcut?email=${encodeURIComponent(session?.user.email)}`
       )
 
-      // EPICS
-      const epicRes = await fetch('https://api.app.shortcut.com/api/v3/epics', {
-        headers: {
-          'Shortcut-Token': process.env.NEXT_PUBLIC_SHORTCUT_KEY,
-          'Content-Type': 'application/json',
-        },
-      })
-      const epicData = await epicRes.json()
-      const teamEpics = epicData.filter((epic) => {
-        return epic.owner_ids.includes(shortcutUserId ?? SHORCUT_NDOM91_ID)
-      })
-      setEpics(teamEpics)
+      const {
+        epics: scEpics,
+        members: scMembers,
+        stories: scStories,
+        workflows: scWorkflows,
+      } = await shortcutDataRes.json()
 
-      // WORKFLOWS
-      const workflowRes = await fetch(
-        'https://api.app.shortcut.com/api/v3/workflows',
-        {
-          headers: {
-            'Shortcut-Token': process.env.NEXT_PUBLIC_SHORTCUT_KEY,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      const workflowData = await workflowRes.json()
-      const workflowStates = workflowData.map((workflow) => {
-        return {
-          id: workflow.id,
-          name: workflow.name,
-          states: workflow.states.map((state) => ({
-            name: state.name,
-            id: state.id,
-          })),
-        }
-      })
-      setWorkflows(workflowStates)
-
-      const res = await fetch(
-        `https://api.app.shortcut.com/api/v3/search/stories?${new URLSearchParams(
-          {
-            query: 'owner:ndom91 !state:"Complete" !is:archived',
-          }
-        )}`,
-        {
-          headers: {
-            'Shortcut-Token': process.env.NEXT_PUBLIC_SHORTCUT_KEY,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-
-      if (res.status === 200) {
-        const data = await res.json()
-        const stories = data.data
-          .filter(
-            (story) => !COMPLETE_STATE_IDS.includes(story.workflow_state_id)
-          )
-          .sort((a, b) => a.updated_at < b.updated_at)
-        setStories(stories)
-        setOriginalStories(stories)
-      } else {
-        throw new Error('Failed to fetch')
-      }
+      setWorkflows(scWorkflows)
+      setEpics(scEpics)
+      setMembers(scMembers)
+      setStories(scStories)
+      setOriginalStories(scStories)
     } catch (e) {
       console.error(e)
     } finally {
       setLoading(false)
     }
-  }, [session?.user?.email, shortcutUserId])
+  }, [session?.user?.email])
 
   useEffect(() => {
     session?.user && fetchStories()

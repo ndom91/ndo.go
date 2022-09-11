@@ -80,3 +80,39 @@ export function decodeHtml(str) {
   txt.innerHTML = str
   return txt.value
 }
+
+export const perf = {
+  now: () => (performance?.now ? performance.now() : new Date().getTime()),
+}
+
+export const serverTiming = {
+  timings: {},
+  start: () => {
+    serverTiming.timings = {
+      total: {
+        start: perf.now(),
+      },
+    }
+  },
+  measure: (name, desc) => {
+    const now = perf.now()
+    if (serverTiming.timings[name]?.start) {
+      serverTiming.timings[name].end = now
+      serverTiming.timings[name].dur = now - serverTiming.timings[name].start
+      if (desc) serverTiming.timings[name].desc = desc
+    } else {
+      serverTiming.timings[name] = { start: now }
+      if (desc) serverTiming.timings[name].desc = desc
+    }
+  },
+  setHeader: () => {
+    serverTiming.measure('total')
+    return Object.entries(serverTiming.timings)
+      .map(([name, measurements]) => {
+        return `${name};${
+          measurements.desc ? `desc="${measurements.desc}";` : ''
+        }dur=${measurements.dur}`
+      })
+      .join(',')
+  },
+}

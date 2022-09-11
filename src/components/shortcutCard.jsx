@@ -1,4 +1,5 @@
 import { Badge } from '@nextui-org/react'
+import { timeAgo } from '@/lib/helpers.js'
 
 const storyTypeIcons = {
   bug: '🐛',
@@ -53,6 +54,9 @@ export default function ShortcutCard({ story, workflows, epics }) {
             >
               {workflow} - {workflowState}
             </Badge>
+            <span className="text-sm font-extralight text-slate-400">
+              Updated {timeAgo(story.updated_at)}
+            </span>
           </div>
         </div>
       </a>
