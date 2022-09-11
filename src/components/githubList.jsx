@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Avatar, Loading, Card, Input } from '@nextui-org/react'
 import { signIn, useSession } from 'next-auth/react'
-import { decodeHtml, timeAgo } from '@/lib/helpers.js'
 import GithubCard from '@/components/githubCard'
-
-const wantedRepoOrgs = ['checkly']
+import { handleClientScriptLoad } from 'next/script'
 
 export default function GithubList() {
   const { data: session } = useSession()
@@ -12,8 +10,6 @@ export default function GithubList() {
   const [filter, setFilter] = useState('')
   const [notifications, setNotifications] = useState([])
   const [originalNotifications, setOriginalNotifications] = useState([])
-  const [comment, setComment] = useState([])
-  const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
     if (!filter && notifications !== originalNotifications)
@@ -29,51 +25,25 @@ export default function GithubList() {
     setNotifications(filteredNotifications)
   }, [filter])
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch(
-        `https://api.github.com/notifications?${new URLSearchParams({
-          all: false,
-          participating: true,
-          per_page: 50,
-        })}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_PAT}`,
-            Accept: 'application/vnd.github+json',
-          },
-        }
+      const githubRes = await fetch(
+        `/api/github?email=${encodeURIComponent(session?.user.email)}`
       )
-
-      if (res.status === 200) {
-        const data = await res.json()
-
-        const githubNotifications = data
-          .filter((data) => {
-            // Don't include notifications about my own commits to my own PRs
-            return !(
-              data.reason === 'author' &&
-              data.repository?.owner?.login === 'ndom91'
-            )
-          })
-          .sort((a, b) => a.updated_at > b.updated_at)
-
-        setNotifications(githubNotifications)
-        setOriginalNotifications(data)
-      } else {
-        throw new Error('Failed to fetch')
-      }
+      const githubData = await githubRes.json()
+      setNotifications(githubData.notifications)
+      setOriginalNotifications(githubData.notifications)
     } catch (e) {
       console.error(e)
     } finally {
       setLoading(false)
     }
-  }
+  }, [session?.user?.email])
 
   useEffect(() => {
     session?.user && fetchNotifications()
-  }, [session?.user])
+  }, [session?.user, fetchNotifications])
 
   return (
     <Card
