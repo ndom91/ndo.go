@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Avatar, Loading, Card, Input } from '@nextui-org/react'
-import { signIn, useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import GithubCard from '@/components/githubCard'
-import { handleClientScriptLoad } from 'next/script'
 
-export default function GithubList() {
-  const { data: session } = useSession()
+export default function GithubList({ email }) {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('')
   const [notifications, setNotifications] = useState([])
@@ -29,7 +27,7 @@ export default function GithubList() {
     setLoading(true)
     try {
       const githubRes = await fetch(
-        `/api/github?email=${encodeURIComponent(session?.user.email)}`
+        `/api/github?email=${encodeURIComponent(email)}`
       )
       const githubData = await githubRes.json()
       setNotifications(githubData.notifications)
@@ -39,11 +37,11 @@ export default function GithubList() {
     } finally {
       setLoading(false)
     }
-  }, [session?.user?.email])
+  }, [email])
 
   useEffect(() => {
-    session?.user && fetchNotifications()
-  }, [session?.user, fetchNotifications])
+    email && fetchNotifications()
+  }, [email, fetchNotifications])
 
   return (
     <Card
@@ -63,7 +61,7 @@ export default function GithubList() {
           />
           <div className="text-xl font-thin dark:text-white">Github</div>
         </div>
-        {session?.user ? (
+        {email ? (
           <Input
             bordered
             color="secondary"
@@ -78,11 +76,11 @@ export default function GithubList() {
       </Card.Header>
       <Card.Body className="m-0 px-1 py-0">
         <ul className="flex flex-col gap-2">
-          {notifications?.length > 0 && session?.user ? (
+          {notifications?.length > 0 && email ? (
             notifications.map((notification) => (
               <GithubCard notification={notification} key={notification.id} />
             ))
-          ) : !session?.user ? (
+          ) : !email ? (
             <div className="flex w-full justify-center">
               <span className="text-lg font-extralight">
                 Please{' '}

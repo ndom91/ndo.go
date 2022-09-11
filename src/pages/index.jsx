@@ -75,7 +75,7 @@ export default function Home({ nextauth }) {
           className="h-full"
           xs={4}
         >
-          <GithubList />
+          <GithubList email={nextauth.user.email} />
         </Grid>
         <Grid
           justify="flex-start"
@@ -83,7 +83,7 @@ export default function Home({ nextauth }) {
           className="h-full"
           xs={4}
         >
-          <ShortcutList />
+          <ShortcutList email={nextauth.user.email} />
         </Grid>
       </Grid.Container>
     </Layout>

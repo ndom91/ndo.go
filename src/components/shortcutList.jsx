@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Avatar, Badge, Button, Card, Input, Loading } from '@nextui-org/react'
-import { signIn, useSession } from 'next-auth/react'
+import { Avatar, Card, Input, Loading } from '@nextui-org/react'
+import { signIn } from 'next-auth/react'
 import ShortcutCard from '@/components/shortcutCard'
 
-export default function ShortcutList() {
-  const { data: session } = useSession()
+export default function ShortcutList({ email }) {
   const [filter, setFilter] = useState('')
   const [loading, setLoading] = useState(true)
   const [stories, setStories] = useState([])
@@ -30,7 +29,7 @@ export default function ShortcutList() {
     setLoading(true)
     try {
       const shortcutDataRes = await fetch(
-        `/api/shortcut?email=${encodeURIComponent(session?.user.email)}`
+        `/api/shortcut?email=${encodeURIComponent(email)}`
       )
 
       const {
@@ -50,11 +49,11 @@ export default function ShortcutList() {
     } finally {
       setLoading(false)
     }
-  }, [session?.user?.email])
+  }, [email])
 
   useEffect(() => {
-    session?.user && fetchStories()
-  }, [session?.user, fetchStories])
+    email && fetchStories()
+  }, [email, fetchStories])
 
   return (
     <Card
@@ -73,7 +72,7 @@ export default function ShortcutList() {
           />
           <div className="text-xl font-thin dark:text-white">Shortcut</div>
         </div>
-        {session?.user ? (
+        {email ? (
           <Input
             bordered
             color="secondary"
@@ -88,7 +87,7 @@ export default function ShortcutList() {
       </Card.Header>
       <Card.Body className="m-0 px-1 py-0">
         <ul className="flex flex-col gap-2">
-          {stories?.length > 0 && epics && workflows && session?.user ? (
+          {stories?.length > 0 && epics && workflows && email ? (
             stories.map((story) => (
               <ShortcutCard
                 epics={epics}
@@ -97,7 +96,7 @@ export default function ShortcutList() {
                 key={story.id}
               />
             ))
-          ) : !session?.user ? (
+          ) : !email ? (
             <div className="flex w-full justify-center">
               <span className="text-lg font-extralight">
                 Please{' '}
