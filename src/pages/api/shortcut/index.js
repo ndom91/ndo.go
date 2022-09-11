@@ -14,7 +14,7 @@ const handler = async (req, res) => {
   const session = await unstable_getServerSession(req, res, authOptions)
   const { method, query } = req
 
-  if (!session?.user) {
+  if (!session?.user || !process.env.SHORTCUT_KEY) {
     console.error('ERR - Unauthorized attempt to DELETE /api/bookmarks')
     return res.status(403).end('Unauthorized')
   }

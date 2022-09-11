@@ -9,7 +9,7 @@ const handler = async (req, res) => {
   const session = await unstable_getServerSession(req, res, authOptions)
   const { method, query } = req
 
-  if (!session?.user) {
+  if (!session?.user || !process.env.GITHUB_PAT) {
     console.error('ERR - Unauthorized attempt to DELETE /api/bookmarks')
     return res.status(403).end('Unauthorized')
   }
