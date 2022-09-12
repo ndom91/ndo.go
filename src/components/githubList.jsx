@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Avatar, Loading, Card, Input } from '@nextui-org/react'
 import { signIn } from 'next-auth/react'
 import GithubCard from '@/components/githubCard'
@@ -9,21 +9,21 @@ export default function GithubList({ email }) {
   const [notifications, setNotifications] = useState([])
   const [originalNotifications, setOriginalNotifications] = useState([])
 
-  useEffect(() => {
-    if (!filter && notifications !== originalNotifications)
-      setNotifications(originalNotifications)
+  if (!filter && notifications !== originalNotifications)
+    setNotifications(originalNotifications)
 
-    const filteredNotifications = originalNotifications.filter((notif) => {
-      if (notif.repository.owner.login.includes(filter)) {
-        return notif
-      } else if (notif.subject.title.includes(filter)) {
-        return notif
-      }
-    })
+  const filteredNotifications = originalNotifications.filter((notif) => {
+    if (notif.repository.owner.login.includes(filter)) {
+      return notif
+    } else if (notif.subject.title.includes(filter)) {
+      return notif
+    }
+  })
+  if (JSON.stringify(filteredNotifications) !== JSON.stringify(notifications)) {
     setNotifications(filteredNotifications)
-  }, [filter])
+  }
 
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = useMemo(async () => {
     setLoading(true)
     try {
       const githubRes = await fetch(
@@ -39,9 +39,7 @@ export default function GithubList({ email }) {
     }
   }, [email])
 
-  useEffect(() => {
-    email && fetchNotifications()
-  }, [email, fetchNotifications])
+  email && !notifications && fetchNotifications()
 
   return (
     <Card

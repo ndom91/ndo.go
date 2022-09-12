@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Avatar, Card, Input, Loading } from '@nextui-org/react'
 import { signIn } from 'next-auth/react'
 import ShortcutCard from '@/components/shortcutCard'
@@ -12,20 +12,20 @@ export default function ShortcutList({ email }) {
   const [workflows, setWorkflows] = useState([])
   const [originalStories, setOriginalStories] = useState([])
 
-  useEffect(() => {
-    if (!filter && stories !== originalStories) setStories(originalStories)
+  if (!filter && stories !== originalStories) setStories(originalStories)
 
-    const filteredStories = originalStories.filter((story) => {
-      if (story.name.toLowerCase().includes(filter.toLowerCase())) {
-        return story
-      } else if (story.id.toString().includes(filter)) {
-        return story
-      }
-    })
+  const filteredStories = originalStories.filter((story) => {
+    if (story.name.toLowerCase().includes(filter.toLowerCase())) {
+      return story
+    } else if (story.id.toString().includes(filter)) {
+      return story
+    }
+  })
+  if (JSON.stringify(filteredStories) !== JSON.stringify(stories)) {
     setStories(filteredStories)
-  }, [filter])
+  }
 
-  const fetchStories = useCallback(async () => {
+  const fetchStories = useMemo(async () => {
     setLoading(true)
     try {
       const shortcutDataRes = await fetch(
@@ -51,9 +51,7 @@ export default function ShortcutList({ email }) {
     }
   }, [email])
 
-  useEffect(() => {
-    email && fetchStories()
-  }, [email, fetchStories])
+  email && !stories && fetchStories()
 
   return (
     <Card
