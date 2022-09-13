@@ -42,7 +42,7 @@ const handler = async (req, res) => {
           }
         )
 
-        if (notificationRes.status !== 200) {
+        if (!notificationRes.ok) {
           return res
             .status(500)
             .json({ error: 'Error fetching Github Notifications' })

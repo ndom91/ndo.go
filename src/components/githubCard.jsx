@@ -17,7 +17,7 @@ export default function GithuCard({ notification }) {
           },
         }
       )
-      if (res.status === 205) {
+      if (res.ok) {
         // toast.success('Marked as read')
         console.log('Marked as read', threadId)
       }

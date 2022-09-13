@@ -23,7 +23,7 @@ export default function HackerNewsList() {
       const res = await fetch(
         'https://hn.algolia.com/api/v1/search?tags=front_page'
       )
-      if (res.status === 200) {
+      if (res.ok) {
         const data = await res.json()
         /* console.log('HN Data', data.hits) */
         setPosts(data.hits)
@@ -40,7 +40,7 @@ export default function HackerNewsList() {
       const res = await fetch(
         `http://hn.algolia.com/api/v1/search?tags=comment,story_${post.objectID}`
       )
-      if (res.status === 200) {
+      if (res.ok) {
         const data = await res.json()
         console.log('comment data', data)
         setComment({ ...comment, title: post.title, items: data.hits })
